@@ -1,0 +1,59 @@
+# ============================================================
+# MediKiosk – .gitignore
+# ============================================================
+
+# ---- Environment & Secrets ----
+.env
+*.env
+!.env.example
+
+# ---- Node / Frontend ----
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/build/
+
+# ---- Python / Backend ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+venv/
+.venv/
+env/
+ENV/
+backend/venv/
+backend/.venv/
+
+# ---- Uploads & Generated Files ----
+backend/uploads/
+backend/temp/
+
+# ---- IDE & OS ----
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ---- Testing ----
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ---- Docker ----
+docker-data/
+
+# ---- Logs ----
+*.log
+logs/

@@ -1,0 +1,64 @@
+version: "3.9"
+
+# ============================================================
+# MediKiosk – Docker Compose
+# ============================================================
+# Services:
+#   frontend  – React/Vite dev server
+#   backend   – FastAPI server
+#   mongodb   – MongoDB database
+# ============================================================
+
+services:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: medikiosk-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - medikiosk-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: medikiosk-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongodb
+    networks:
+      - medikiosk-network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: medikiosk-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: medikiosk
+    networks:
+      - medikiosk-network
+
+networks:
+  medikiosk-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
