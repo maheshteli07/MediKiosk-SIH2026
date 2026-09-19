@@ -56,6 +56,7 @@ def serialize_doc(doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     Convert a MongoDB document into a JSON-friendly dict:
     - Replaces `_id` (ObjectId) with string `id`
     - Converts any nested ObjectIds to strings
+    - Converts datetime objects to ISO strings
     """
     if doc is None:
         return None
@@ -65,8 +66,16 @@ def serialize_doc(doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
             out["id"] = str(v)
         elif isinstance(v, ObjectId):
             out[k] = str(v)
+        elif isinstance(v, datetime):
+            out[k] = v.isoformat()
         elif isinstance(v, list):
-            out[k] = [str(item) if isinstance(item, ObjectId) else item for item in v]
+            out[k] = [
+                v_item.isoformat() if isinstance(v_item, datetime)
+                else str(v_item) if isinstance(v_item, ObjectId)
+                else serialize_doc(v_item) if isinstance(v_item, dict)
+                else v_item
+                for v_item in v
+            ]
         elif isinstance(v, dict):
             out[k] = serialize_doc(v)
         else:

@@ -53,22 +53,8 @@ class Settings(BaseSettings):
     jwt_expiration_minutes: int = Field(default=60, gt=0)
 
     # CORS values use comma-separated .env values rather than JSON arrays.
-    cors_allowed_origins: str | list[str] = Field(
-        default_factory=lambda: [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:8000",
-            "http://127.0.0.1:8000",
-        ],
-        validation_alias=AliasChoices(
-            "cors_allowed_origins",
-            "cors_origins_str",
-            "cors_origins",
-            "CORS_ORIGINS_STR",
-            "CORS_ALLOWED_ORIGINS",
-        ),
+    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:5173"]
     )
 
     # AI / LLM

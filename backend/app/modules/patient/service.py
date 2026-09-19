@@ -433,6 +433,8 @@ class PatientService:
         now = datetime.now(timezone.utc)
         expires_at = session.get("expires_at")
         if expires_at:
+            if isinstance(expires_at, str):
+                expires_at = datetime.fromisoformat(expires_at)
             if expires_at.tzinfo is None:
                 expires_at = expires_at.replace(tzinfo=timezone.utc)
             if now > expires_at and session.get("status") == SessionStatus.ACTIVE.value:

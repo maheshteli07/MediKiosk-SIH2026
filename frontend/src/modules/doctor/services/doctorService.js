@@ -1,25 +1,36 @@
 /**
- * doctorService.js – Doctor Module Services – Dev 5
+ * doctorService.js – Doctor Module Services
+ * Handles API calls to backend /api/doctor and /api/auth endpoints.
  */
 
 import api from "@/services/api.js";
 
 export async function loginDoctor(credentials) {
-  throw new Error("Not implemented");
+  const response = await api.post("/api/auth/dev-token", {
+    role: "doctor",
+    sub: credentials?.username || "doc-001",
+  });
+  return response.data;
 }
 
 export async function getPatientQueue() {
-  throw new Error("Not implemented");
+  const response = await api.get("/api/doctor/patients");
+  return response.data;
 }
 
 export async function getPatientCase(patientId) {
-  throw new Error("Not implemented");
+  const response = await api.get(`/api/doctor/patients/${patientId}`);
+  return response.data;
 }
 
 export async function verifySummary(summaryId, notes) {
-  throw new Error("Not implemented");
+  const response = await api.put(`/api/doctor/summary/${summaryId}/verify`, {
+    doctor_notes: notes,
+  });
+  return response.data;
 }
 
 export async function finalizeSummary(summaryId) {
-  throw new Error("Not implemented");
+  const response = await api.post(`/api/doctor/summary/${summaryId}/finalize`);
+  return response.data;
 }
