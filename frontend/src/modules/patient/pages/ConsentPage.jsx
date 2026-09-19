@@ -1,5 +1,10 @@
 /**
  * ConsentPage.jsx – Step 2 of Patient Onboarding: Informed Privacy & AI Consent.
+ *
+ * On "I Agree & Proceed":
+ *  1. Reads session_id from localStorage.
+ *  2. POSTs the three consent decisions to /api/patients/sessions/{id}/consent.
+ *  3. Navigates to /patient/identify.
  */
 
 import React, { useState } from "react";
@@ -7,17 +12,46 @@ import { useNavigate } from "react-router-dom";
 import { ShieldCheck, Check, ArrowRight, Lock, FileText, Bot } from "lucide-react";
 import PatientShell from "@/shared/components/PatientShell.jsx";
 import Button from "@/shared/components/Button.jsx";
+import { recordConsent } from "@/modules/patient/services/patientService.js";
 
 function ConsentPage() {
   const navigate = useNavigate();
-  const [consentAiVoice, setConsentAiVoice] = useState(true);
-  const [consentOcr, setConsentOcr] = useState(true);
-  const [consentDoctorApproval, setConsentDoctorApproval] = useState(true);
+  const [consentAiVoice, setConsentAiVoice] = useState(false);
+  const [consentOcr, setConsentOcr] = useState(false);
+  const [consentDoctorApproval, setConsentDoctorApproval] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const allAccepted = consentAiVoice && consentOcr && consentDoctorApproval;
 
-  const handleContinue = () => {
-    navigate("/patient/identify");
+  const handleContinue = async () => {
+    setError("");
+    setIsLoading(true);
+
+    const sessionId = localStorage.getItem("medikiosk_session_id");
+    if (!sessionId) {
+      setError("Session not found. Please go back and select your language first.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await recordConsent(sessionId, [
+        { consent_type: "ai_processing", granted: consentAiVoice },
+        { consent_type: "data_collection", granted: consentOcr },
+        { consent_type: "abdm_sharing", granted: consentDoctorApproval },
+      ]);
+      navigate("/patient/identify");
+    } catch (err) {
+      const message =
+        err.response?.data?.error?.message ||
+        err.response?.data?.detail ||
+        err.message ||
+        "Could not record consent. Please retry.";
+      setError(typeof message === "string" ? message : "Failed to save consent.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -35,6 +69,13 @@ function ConsentPage() {
             MediKiosk keeps your health data encrypted and protected under Indian Telemedicine & ABDM Guidelines.
           </p>
         </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div role="alert" className="rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+            {error}
+          </div>
+        )}
 
         {/* Interactive Consent Cards */}
         <div className="space-y-3 text-left">
@@ -122,10 +163,16 @@ function ConsentPage() {
             icon={ArrowRight}
             onClick={handleContinue}
             disabled={!allAccepted}
+            loading={isLoading}
             fullWidth
           >
             I Agree & Proceed
           </Button>
+          {!allAccepted && (
+            <p className="text-xs text-slate-400 text-center mt-2">
+              Please accept all three items to continue.
+            </p>
+          )}
         </div>
       </div>
     </PatientShell>

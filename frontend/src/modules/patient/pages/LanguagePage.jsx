@@ -1,5 +1,10 @@
 /**
  * LanguagePage.jsx – Step 1 of Patient Onboarding: Language Selection.
+ *
+ * On "Continue":
+ *  1. Calls POST /api/patients/sessions/start to create a real session.
+ *  2. Saves session_id and selected language to localStorage.
+ *  3. Navigates to /consent.
  */
 
 import React, { useState } from "react";
@@ -7,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { Globe, ArrowRight, Check } from "lucide-react";
 import PatientShell from "@/shared/components/PatientShell.jsx";
 import Button from "@/shared/components/Button.jsx";
+import { startSession } from "@/modules/patient/services/patientService.js";
 
 const LANGUAGES = [
   { id: "en", name: "English", native: "English", region: "Pan-India" },
@@ -22,10 +28,36 @@ const LANGUAGES = [
 function LanguagePage() {
   const navigate = useNavigate();
   const [selectedLang, setSelectedLang] = useState("hi");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleContinue = () => {
-    localStorage.setItem("medikiosk_patient_lang", selectedLang);
-    navigate("/consent");
+  const handleContinue = async () => {
+    setError("");
+    setIsLoading(true);
+    try {
+      // Create a new intake session on the backend
+      const res = await startSession(selectedLang);
+      const session = res.data;
+
+      if (!session?.id) {
+        throw new Error("Session could not be created. Please try again.");
+      }
+
+      // Persist session context for downstream pages
+      localStorage.setItem("medikiosk_session_id", session.id);
+      localStorage.setItem("medikiosk_patient_lang", selectedLang);
+
+      navigate("/consent");
+    } catch (err) {
+      const message =
+        err.response?.data?.error?.message ||
+        err.response?.data?.detail ||
+        err.message ||
+        "Could not start session. Please retry.";
+      setError(typeof message === "string" ? message : "Failed to start session.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,6 +75,13 @@ function LanguagePage() {
             भाषा चुनें · மொழியை தேர்ந்தெடுக்கவும் · भाषा निवडा
           </p>
         </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div role="alert" className="rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 text-left">
+            {error}
+          </div>
+        )}
 
         {/* Language Selection Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
@@ -84,6 +123,7 @@ function LanguagePage() {
             size="xl"
             icon={ArrowRight}
             onClick={handleContinue}
+            loading={isLoading}
             fullWidth
           >
             Continue in {LANGUAGES.find((l) => l.id === selectedLang)?.native}
