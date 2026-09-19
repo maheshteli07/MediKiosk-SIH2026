@@ -6,7 +6,7 @@ create their own ``Settings`` objects.
 
 from __future__ import annotations
 
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Union
 
 from pydantic import Field, field_validator
 try:
@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     jwt_expiration_minutes: int = Field(default=60, gt=0)
 
     # CORS values use comma-separated .env values rather than JSON arrays.
-    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
+    cors_allowed_origins: Union[list[str], str] = Field(
         default_factory=lambda: ["http://localhost:5173"]
     )
 
@@ -91,7 +91,7 @@ class Settings(BaseSettings):
 
     # Upload limits used by a future document-upload module.
     max_upload_size_mb: int = Field(default=10, gt=0)
-    allowed_upload_extensions: Annotated[list[str], NoDecode] = Field(
+    allowed_upload_extensions: Union[list[str], str] = Field(
         default_factory=lambda: ["pdf", "jpg", "jpeg", "png"]
     )
 

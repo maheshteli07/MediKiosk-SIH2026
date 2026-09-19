@@ -9,6 +9,7 @@ import ConsentPage from "@/modules/patient/pages/ConsentPage.jsx";
 import PatientIdentificationPage from "@/modules/patient/pages/PatientIdentificationPage.jsx";
 import BasicDetailsPage from "@/modules/patient/pages/BasicDetailsPage.jsx";
 import ConsultationModePage from "@/modules/patient/pages/ConsultationModePage.jsx";
+import PostVisitFeedbackPage from "@/modules/patient/pages/PostVisitFeedbackPage.jsx";
 
 // ---- Conversation Module Pages ----
 import ConversationPage from "@/modules/conversation/pages/ConversationPage.jsx";
@@ -33,6 +34,7 @@ import PatientQueuePage from "@/modules/doctor/pages/PatientQueuePage.jsx";
 import PatientCasePage from "@/modules/doctor/pages/PatientCasePage.jsx";
 import SummaryReviewPage from "@/modules/doctor/pages/SummaryReviewPage.jsx";
 import VerificationPage from "@/modules/doctor/pages/VerificationPage.jsx";
+import PatientFeedbackPage from "@/modules/doctor/pages/PatientFeedbackPage.jsx";
 
 /**
  * AppRoutes.jsx
@@ -60,6 +62,7 @@ function AppRoutes() {
       <Route path={ROUTES.PATIENT_IDENTIFICATION} element={<PatientIdentificationPage />} />
       <Route path={ROUTES.BASIC_DETAILS} element={<BasicDetailsPage />} />
       <Route path={ROUTES.CONSULTATION_MODE} element={<ConsultationModePage />} />
+      <Route path={ROUTES.PATIENT_FEEDBACK} element={<PostVisitFeedbackPage />} />
 
       {/* Conversation */}
       <Route path={ROUTES.CONVERSATION} element={<ConversationPage />} />
@@ -84,6 +87,7 @@ function AppRoutes() {
       <Route path={ROUTES.PATIENT_CASE} element={<PatientCasePage />} />
       <Route path={ROUTES.SUMMARY_REVIEW} element={<SummaryReviewPage />} />
       <Route path={ROUTES.VERIFICATION} element={<VerificationPage />} />
+      <Route path={ROUTES.DOCTOR_FEEDBACK} element={<PatientFeedbackPage />} />
     </Routes>
   );
 }

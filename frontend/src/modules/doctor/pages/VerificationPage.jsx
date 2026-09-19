@@ -18,6 +18,7 @@ import {
   ArrowRight,
   ShieldCheck,
   FileCheck,
+  Star,
   AlertCircle,
   AlertTriangle,
   FileText,
@@ -203,22 +204,22 @@ function VerificationPage() {
           </div>
 
           {/* Actions Bar */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-white dark:bg-[#1e2535] border border-slate-200 dark:border-slate-700/60 rounded-3xl p-5 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center shrink-0">
                 <FileCheck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
                   Official Prescription Generated
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Ready for patient pharmacy handoff or PDF print
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-end">
               <Button
                 variant="secondary"
                 size="md"
@@ -226,6 +227,22 @@ function VerificationPage() {
                 onClick={() => window.print()}
               >
                 Print Prescription
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                icon={Star}
+                onClick={() =>
+                  navigate(
+                    `${ROUTES.PATIENT_FEEDBACK}?caseId=${encodeURIComponent(
+                      currentCase.id
+                    )}&patientId=${encodeURIComponent(
+                      currentCase.patientId
+                    )}&patientName=${encodeURIComponent(currentCase.patientName)}`
+                  )
+                }
+              >
+                Send to Patient Feedback
               </Button>
               <Button
                 variant="primary"

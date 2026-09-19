@@ -13,6 +13,7 @@ export { default as ConsentPage } from "./pages/ConsentPage.jsx";
 export { default as PatientIdentificationPage } from "./pages/PatientIdentificationPage.jsx";
 export { default as BasicDetailsPage } from "./pages/BasicDetailsPage.jsx";
 export { default as ConsultationModePage } from "./pages/ConsultationModePage.jsx";
+export { default as PostVisitFeedbackPage } from "./pages/PostVisitFeedbackPage.jsx";
 
 // Public components (only those intentionally shared)
 export { default as PatientHeader } from "./components/PatientHeader.jsx";

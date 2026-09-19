@@ -14,6 +14,7 @@ export const ROUTES = {
   PATIENT_IDENTIFICATION: "/patient/identify",
   BASIC_DETAILS: "/patient/details",
   CONSULTATION_MODE: "/patient/mode",
+  PATIENT_FEEDBACK: "/patient/feedback",
 
   // Conversation
   CONVERSATION: "/conversation",
@@ -42,4 +43,5 @@ export const ROUTES = {
   PATIENT_CASE: "/doctor/patient/:patientId",
   SUMMARY_REVIEW: "/doctor/summary/:summaryId",
   VERIFICATION: "/doctor/verify/:summaryId",
+  DOCTOR_FEEDBACK: "/doctor/feedback",
 };

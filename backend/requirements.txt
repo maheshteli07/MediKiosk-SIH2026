@@ -37,3 +37,4 @@ python-dotenv==1.0.1
 
 # Utilities
 python-dateutil==2.9.0
+eval-type-backport==0.4.0

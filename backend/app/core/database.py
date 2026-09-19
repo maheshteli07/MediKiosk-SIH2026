@@ -112,3 +112,4 @@ class Collections:
     INTEGRATION_LOGS = "integration_logs"
     CONSENTS = "consents"
     DEV_TOKENS = "dev_tokens"          # lightweight token log for hackathon
+    DOCTOR_FEEDBACK = "doctor_feedback"

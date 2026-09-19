@@ -25,6 +25,7 @@ import {
   Stethoscope,
   Sun,
   Moon,
+  MessageSquare,
 } from "lucide-react";
 import { ROUTES } from "@/shared/constants/routes.js";
 import authService from "@/services/authService.js";
@@ -51,6 +52,11 @@ const NAV_ITEMS = [
     label: "Approvals",
     icon:  CheckCircle2,
     to:    ROUTES.DOCTOR_APPROVALS,
+  },
+  {
+    label: "Feedback",
+    icon:  MessageSquare,
+    to:    ROUTES.DOCTOR_FEEDBACK,
   },
 ];
 
