@@ -39,6 +39,9 @@ from app.modules.doctor.routes import router as doctor_router
 # ── AI / Gemini router ─────────────────────────────────────────────────────────
 from app.integrations.ai.ai_routes import router as ai_router
 
+# ── Speech router ──────────────────────────────────────────────────────────────
+from app.integrations.speech.speech_routes import router as speech_router
+
 # ── Response helpers ───────────────────────────────────────────────────────────
 from app.utils.response import error_envelope
 
@@ -156,6 +159,9 @@ app.include_router(doctor_router,       prefix=f"{API_PREFIX}/doctor",       tag
 
 # AI / Gemini
 app.include_router(ai_router,           prefix=f"{API_PREFIX}/ai",          tags=["AI"])
+
+# Speech / ASR
+app.include_router(speech_router,       prefix=f"{API_PREFIX}/speech",      tags=["Speech"])
 
 
 # ─────────────────────────────────────────────────────────────────────────────

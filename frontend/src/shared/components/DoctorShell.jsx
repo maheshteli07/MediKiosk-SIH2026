@@ -76,7 +76,7 @@ function NavItem({ label, icon: Icon, to, end = false }) {
   );
 }
 
-function DoctorShell({ children, title, breadcrumb }) {
+function DoctorShell({ children, title, subtitle, breadcrumb }) {
   const navigate = useNavigate();
   const { isDark, toggle } = useTheme();
   const currentUser = authService.getCurrentUser();
@@ -156,7 +156,7 @@ function DoctorShell({ children, title, breadcrumb }) {
       {/* ── Right column ───────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="shrink-0 h-14 bg-white dark:bg-[#141822] border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between px-6">
+        <header className="shrink-0 min-h-14 py-2 bg-white dark:bg-[#141822] border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between px-6">
           <div className="min-w-0">
             {breadcrumb && (
               <p className="text-[11px] text-slate-400 dark:text-slate-500 mb-0.5 truncate">
@@ -166,6 +166,11 @@ function DoctorShell({ children, title, breadcrumb }) {
             <h1 className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
               {title || "Dashboard"}
             </h1>
+            {subtitle && (
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                {subtitle}
+              </p>
+            )}
           </div>
 
           {/* Right-side actions: user info + theme toggle */}

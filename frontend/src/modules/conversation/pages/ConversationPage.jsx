@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, RotateCcw } from "lucide-react";
 import PatientShell from "@/shared/components/PatientShell.jsx";
 import Button from "@/shared/components/Button.jsx";
+import { ROUTES } from "@/shared/constants/routes.js";
 
 import ConversationStart from "../components/ConversationStart.jsx";
 import ConversationThread from "../components/ConversationThread.jsx";
@@ -160,7 +161,7 @@ function ConversationPage() {
                   variant="primary"
                   size="md"
                   icon={ArrowRight}
-                  onClick={() => navigate("/clinical/summary")}
+                  onClick={() => navigate(ROUTES.CLINICAL_SUMMARY)}
                 >
                   View Summary Draft
                 </Button>
@@ -185,7 +186,7 @@ function ConversationPage() {
               <Button
                 variant="primary"
                 size="md"
-                onClick={() => navigate("/clinical/summary")}
+                onClick={() => navigate(ROUTES.CLINICAL_SUMMARY)}
               >
                 Proceed to Doctor Review
               </Button>

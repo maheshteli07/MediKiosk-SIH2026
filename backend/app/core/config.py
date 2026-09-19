@@ -73,6 +73,11 @@ class Settings(BaseSettings):
     bhashini_api_key: str = ""
     bhashini_base_url: str = "https://dhruva-api.bhashini.gov.in"
 
+    # NVIDIA Riva / NIM ASR (used when speech_provider="nvidia")
+    nvidia_api_key: str = ""
+    nvidia_riva_server: str = "grpc.nvcf.nvidia.com:443"
+    nvidia_function_id: str = "b702f636-f60c-4a3d-a6f4-f3568c13bd7d"
+
     # OCR
     ocr_provider: str = "mock"
 
@@ -181,6 +186,18 @@ class Settings(BaseSettings):
     @property
     def BHASHINI_BASE_URL(self) -> str:
         return self.bhashini_base_url
+
+    @property
+    def NVIDIA_API_KEY(self) -> str:
+        return self.nvidia_api_key
+
+    @property
+    def NVIDIA_RIVA_SERVER(self) -> str:
+        return self.nvidia_riva_server
+
+    @property
+    def NVIDIA_FUNCTION_ID(self) -> str:
+        return self.nvidia_function_id
 
     @property
     def OCR_PROVIDER(self) -> str:

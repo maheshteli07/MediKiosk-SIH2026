@@ -2,7 +2,7 @@
 speech_service.py – Speech Integration: Main Service Interface
 Developer 5
 
-Routes speech-to-text requests to Bhashini, Whisper, or mock.
+Routes speech-to-text requests to Bhashini, Whisper, NVIDIA Riva, or mock.
 """
 
 from app.core.config import settings
@@ -19,4 +19,7 @@ async def transcribe_audio(audio_bytes: bytes, language: str = "en") -> dict:
     elif settings.SPEECH_PROVIDER == "whisper":
         from app.integrations.speech.whisper_service import whisper_transcribe
         return await whisper_transcribe(audio_bytes, language)
+    elif settings.SPEECH_PROVIDER == "nvidia":
+        from app.integrations.speech.nvidia_speech_service import nvidia_transcribe
+        return await nvidia_transcribe(audio_bytes, language)
     raise ValueError(f"Unknown speech provider: {settings.SPEECH_PROVIDER}")
