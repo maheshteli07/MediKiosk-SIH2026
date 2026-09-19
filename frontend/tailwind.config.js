@@ -10,10 +10,15 @@ export default {
         primary: {
           50:  "#EDF7F6",
           100: "#BAE8E6",
+          200: "#8CD4D1",
           300: "#5CB8B5",
+          400: "#329E9B",
           500: "#0E6B67",
+          600: "#0B5854",
           700: "#0A504D",
+          800: "#083E3C",
           900: "#063330",
+          950: "#031F1D",
         },
         // AYUSH accent — gold, anchored at #C98A2C
         ayush: {
