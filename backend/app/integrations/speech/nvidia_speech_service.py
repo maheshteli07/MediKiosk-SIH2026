@@ -82,17 +82,18 @@ def _sync_nvidia_transcribe(audio_bytes: bytes, language: str) -> dict[str, Any]
     """Synchronous Riva client call to be run in a worker thread."""
     import riva.client
 
-    api_key = settings.NVIDIA_API_KEY
-    server_uri = settings.NVIDIA_RIVA_SERVER
-    function_id = settings.NVIDIA_FUNCTION_ID
+    api_key = getattr(settings, "nvidia_speech_api_key", "") or settings.NVIDIA_API_KEY
+    server_uri = getattr(settings, "nvidia_riva_server", "grpc.nvcf.nvidia.com:443")
+    function_id = getattr(settings, "nvidia_function_id", "b702f636-f60c-4a3d-a6f4-f3568c13bd7d")
 
     if not api_key:
-        raise ValueError("NVIDIA_API_KEY is not configured in backend settings.")
+        raise ValueError("NVIDIA Speech API Key is not configured in backend settings.")
 
     # Normalise language code
     lang_code = LANGUAGE_MAP.get(language.lower(), language)
     if "-" not in lang_code:
         lang_code = f"{lang_code}-IN" if lang_code != "en" else "en-US"
+
 
     # Pre-process audio into 16kHz mono PCM WAV
     wav_bytes, duration = _prepare_audio_pcm_wav(audio_bytes)

@@ -59,27 +59,40 @@ class Settings(BaseSettings):
 
     # AI / LLM
     mock_ai_mode: bool = False
-    llm_provider: str = "gemini"
+    llm_provider: str = "nvidia"
     llm_api_key: str = ""
-    llm_model: str = "gpt-4o"
-    llm_base_url: str = "https://api.openai.com/v1"
+    llm_model: str = "nvidia/nemotron-3-super-120b-a12b"
+    llm_base_url: str = "https://integrate.api.nvidia.com/v1"
 
     # Gemini (used when llm_provider="gemini")
-    gemini_api_key: str = "AQ.Ab8RN6L6gf5QjT5Pq3Z7lyPnbkHdFIAgvFD55NdqNQOYRbWL0Q"
+    gemini_api_key: str = ""
     gemini_model: str = "gemini-2.5-flash"
 
+    # Ollama (used when llm_provider="ollama")
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "llama3.2:1b"
+
+    # NVIDIA NIM (used when llm_provider="nvidia")
+    nvidia_llm_model: str = "nvidia/nemotron-3-super-120b-a12b"
+
+    nvidia_llm_base_url: str = "https://integrate.api.nvidia.com/v1"
+
     # Speech
-    speech_provider: str = "mock"
+    speech_provider: str = "nvidia"
     bhashini_api_key: str = ""
     bhashini_base_url: str = "https://dhruva-api.bhashini.gov.in"
 
     # NVIDIA Riva / NIM ASR (used when speech_provider="nvidia")
     nvidia_api_key: str = ""
+    nvidia_speech_api_key: str = ""
     nvidia_riva_server: str = "grpc.nvcf.nvidia.com:443"
     nvidia_function_id: str = "b702f636-f60c-4a3d-a6f4-f3568c13bd7d"
 
     # OCR
-    ocr_provider: str = "mock"
+    ocr_provider: str = "nemotron"
+    nvidia_ocr_api_key: str = ""
+    nvidia_ocr_url: str = "https://ai.api.nvidia.com/v1/cv/nvidia/nemotron-ocr-v2"
+
 
     # FHIR / ABDM / HIS
     fhir_base_url: str = ""
@@ -192,6 +205,14 @@ class Settings(BaseSettings):
         return self.nvidia_api_key
 
     @property
+    def NVIDIA_LLM_MODEL(self) -> str:
+        return self.nvidia_llm_model
+
+    @property
+    def NVIDIA_LLM_BASE_URL(self) -> str:
+        return self.nvidia_llm_base_url
+
+    @property
     def NVIDIA_RIVA_SERVER(self) -> str:
         return self.nvidia_riva_server
 
@@ -200,8 +221,29 @@ class Settings(BaseSettings):
         return self.nvidia_function_id
 
     @property
+    def OLLAMA_BASE_URL(self) -> str:
+        return self.ollama_base_url
+
+    @property
+    def OLLAMA_MODEL(self) -> str:
+        return self.ollama_model
+
+    @property
     def OCR_PROVIDER(self) -> str:
         return self.ocr_provider
+
+    @property
+    def NVIDIA_SPEECH_API_KEY(self) -> str:
+        return self.nvidia_speech_api_key or self.nvidia_api_key
+
+    @property
+    def NVIDIA_OCR_API_KEY(self) -> str:
+        return self.nvidia_ocr_api_key or self.nvidia_api_key
+
+    @property
+    def NVIDIA_OCR_URL(self) -> str:
+        return self.nvidia_ocr_url
+
 
     @property
     def FHIR_BASE_URL(self) -> str:

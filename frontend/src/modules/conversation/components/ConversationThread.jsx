@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import { Mic, Send, ShieldCheck, Sparkles, User, Bot, RefreshCw } from "lucide-react";
+import { Mic, MicOff, Send, ShieldCheck, Sparkles, User, Bot, RefreshCw } from "lucide-react";
 import Button from "@/shared/components/Button.jsx";
 import LiveTranscriptionBanner from "./LiveTranscriptionBanner.jsx";
 
@@ -12,6 +12,7 @@ function ConversationThread({
   messages = [],
   onSendMessage,
   onStartMic,
+  onStopMic,
   isListening,
   interimTranscription,
   onConfirmTranscription,
@@ -35,6 +36,15 @@ function ConversationThread({
     onSendMessage(inputText.trim());
     setInputText("");
   };
+
+  const handleMicClick = () => {
+    if (isListening) {
+      if (onStopMic) onStopMic();
+    } else {
+      if (onStartMic) onStartMic();
+    }
+  };
+
 
   return (
     <div className="flex flex-col h-full bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
@@ -138,22 +148,28 @@ function ConversationThread({
       <form onSubmit={handleSendText} className="p-3 bg-slate-50 flex items-center gap-2">
         <button
           type="button"
-          onClick={onStartMic}
-          disabled={isListening || isProcessing}
-          aria-label="Start mic"
-          className="w-11 h-11 rounded-xl bg-primary-500 hover:bg-primary-600 text-white flex items-center justify-center shrink-0 shadow-sm transition-transform active:scale-95 disabled:opacity-50"
+          onClick={handleMicClick}
+          disabled={isProcessing}
+          aria-label={isListening ? "Stop listening" : "Start mic"}
+          title={isListening ? "Click to stop listening & send" : "Click to speak"}
+          className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-sm transition-all active:scale-95 disabled:opacity-50 ${
+            isListening
+              ? "bg-rose-500 hover:bg-rose-600 text-white animate-pulse ring-4 ring-rose-200"
+              : "bg-primary-500 hover:bg-primary-600 text-white"
+          }`}
         >
-          <Mic className="w-5 h-5" />
+          {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </button>
 
         <input
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Type your response here..."
-          disabled={isListening || isProcessing}
+          placeholder={isListening ? "Listening... Speak now, or click mic to stop" : "Type your response here..."}
+          disabled={isProcessing}
           className="flex-1 bg-white border border-slate-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none disabled:bg-slate-100"
         />
+
 
         <Button
           type="submit"

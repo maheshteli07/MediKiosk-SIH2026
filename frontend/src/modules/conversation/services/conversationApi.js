@@ -50,26 +50,26 @@ export const conversationApi = {
    */
   sendMessage: async (sessionId, message, lang = "en", turnIndex = 0, uploadedDocs = []) => {
     try {
-      if (sessionId && !sessionId.startsWith("local_session_")) {
-        const response = await api.post("/api/conversation/message", {
-          session_id: sessionId,
-          message: message,
-          language: lang,
-        });
-        if (response.data?.success && response.data?.data) {
-          const data = response.data.data;
-          return {
-            aiPrompt: data.ai_prompt,
-            extractedEntities: data.extracted_entities || [],
-            redFlags: data.red_flags || [],
-            isComplete: data.is_complete || false,
-            retrievedContext: data.retrieved_context || [],
-          };
-        }
+      const activeSessionId = sessionId || ("session_" + Date.now());
+      const response = await api.post("/api/conversation/message", {
+        session_id: activeSessionId,
+        message: message,
+        language: lang,
+      });
+      if (response.data?.success && response.data?.data) {
+        const data = response.data.data;
+        return {
+          aiPrompt: data.ai_prompt,
+          extractedEntities: data.extracted_entities || [],
+          redFlags: data.red_flags || [],
+          isComplete: data.is_complete || false,
+          retrievedContext: data.retrieved_context || [],
+        };
       }
     } catch (err) {
       console.warn("Backend conversation message failed, using local script:", err);
     }
+
 
     // Fallback script progression
     const script = getAdaptiveConversationScript(uploadedDocs);
@@ -85,6 +85,26 @@ export const conversationApi = {
       isComplete: isComplete,
       retrievedContext: [],
     };
+  },
+
+  /**
+   * Transcribe an audio blob using the backend NVIDIA Riva / Speech endpoint.
+   */
+  transcribeAudio: async (audioBlob, lang = "en") => {
+    try {
+      const formData = new FormData();
+      formData.append("file", audioBlob, "recording.webm");
+      formData.append("language", lang);
+      const response = await api.post("/api/speech/transcribe", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.data?.success && response.data?.data) {
+        return response.data.data.transcript || "";
+      }
+    } catch (err) {
+      console.warn("Backend speech transcribe failed:", err);
+    }
+    return "";
   },
 
   /**
@@ -108,6 +128,7 @@ export const conversationApi = {
       status: "completed",
     };
   },
+
 
   /**
    * Returns the initial AI greeting tailored to uploaded documents.

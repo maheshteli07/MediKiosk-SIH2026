@@ -5,7 +5,7 @@
  * ExtractedSummaryPanel, with real backend RAG session support and seamless fallback.
  */
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, CheckCircle2, RotateCcw } from "lucide-react";
 import PatientShell from "@/shared/components/PatientShell.jsx";
@@ -16,6 +16,7 @@ import ConversationStart from "../components/ConversationStart.jsx";
 import ConversationThread from "../components/ConversationThread.jsx";
 import ExtractedSummaryPanel from "../components/ExtractedSummaryPanel.jsx";
 import { conversationApi } from "../services/conversationApi.js";
+import { SpeechRecognitionSession } from "../services/speechService.js";
 
 function ConversationPage() {
   const navigate = useNavigate();
@@ -57,6 +58,69 @@ function ConversationPage() {
   const [isListening, setIsListening] = useState(false);
   const [interimTranscription, setInterimTranscription] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const speechSessionRef = useRef(null);
+
+  // Clean up mic session on unmount
+  useEffect(() => {
+    return () => {
+      if (speechSessionRef.current) {
+        speechSessionRef.current.stop();
+      }
+    };
+  }, []);
+
+  // Real Speech Recognition Controller
+  const startSpeechRecognition = async () => {
+    if (speechSessionRef.current) {
+      await speechSessionRef.current.stop();
+    }
+
+    setIsListening(true);
+    setInterimTranscription("");
+
+    const session = new SpeechRecognitionSession({
+      lang: currentLang,
+      onStart: () => {
+        setIsListening(true);
+      },
+      onInterim: (text) => {
+        setInterimTranscription(text);
+      },
+      onFinal: (text) => {
+        setInterimTranscription(text);
+      },
+      onError: (errMsg) => {
+        console.warn("[Speech] Error:", errMsg);
+        setIsListening(false);
+      },
+      onEnd: () => {
+        setIsListening(false);
+      },
+    });
+
+    speechSessionRef.current = session;
+    await session.start();
+  };
+
+  const stopSpeechRecognition = async () => {
+    if (speechSessionRef.current) {
+      const finalTranscript = await speechSessionRef.current.stop();
+      setIsListening(false);
+      if (finalTranscript) {
+        setInterimTranscription(finalTranscript);
+      }
+    } else {
+      setIsListening(false);
+    }
+  };
+
+  const handleCancelTranscription = async () => {
+    if (speechSessionRef.current) {
+      await speechSessionRef.current.stop();
+    }
+    setIsListening(false);
+    setInterimTranscription("");
+  };
 
   // Start Voice Flow
   const handleStartMic = async () => {
@@ -88,8 +152,10 @@ function ConversationPage() {
       setExtractedEntities(conversationApi.getInitialEntities(uploadedDocs));
     }
 
-    // Trigger initial speech streaming demo
-    triggerSpeechDemo(0);
+    // Start live microphone capture
+    setTimeout(() => {
+      startSpeechRecognition();
+    }, 400);
   };
 
   // Start Typing Flow
@@ -123,27 +189,18 @@ function ConversationPage() {
     }
   };
 
-  // Trigger Simulated Speech Recording
-  const triggerSpeechDemo = async (targetTurn) => {
-    setIsListening(true);
-    setInterimTranscription("");
-
-    await conversationApi.simulateSpeechInput(
-      targetTurn,
-      currentLang,
-      (partialText) => {
-        setInterimTranscription(partialText);
-      },
-      uploadedDocs
-    );
-
-    setIsListening(false);
-  };
 
   // Handle Confirmed Patient Message (Voice or Text)
   const handleSendMessage = async (text) => {
+    if (speechSessionRef.current) {
+      try {
+        speechSessionRef.current.stop();
+      } catch {}
+    }
+    setIsListening(false);
     setInterimTranscription("");
     const newTimestamp = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
 
     // Add Patient Message
     const updatedMessages = [
@@ -275,17 +332,19 @@ function ConversationPage() {
               <ConversationThread
                 messages={messages}
                 onSendMessage={handleSendMessage}
-                onStartMic={() => triggerSpeechDemo(turnIndex)}
+                onStartMic={startSpeechRecognition}
+                onStopMic={stopSpeechRecognition}
                 isListening={isListening}
                 interimTranscription={interimTranscription}
                 onConfirmTranscription={handleSendMessage}
-                onCancelTranscription={() => setInterimTranscription("")}
+                onCancelTranscription={handleCancelTranscription}
                 isProcessing={isProcessing}
               />
             </div>
 
             <ExtractedSummaryPanel extractedEntities={extractedEntities} />
           </div>
+
         </div>
       )}
     </PatientShell>

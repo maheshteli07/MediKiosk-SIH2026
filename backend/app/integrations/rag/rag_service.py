@@ -121,39 +121,27 @@ async def rag_chat_turn(
     retrieved_chunks = await retrieve(session_id, query, top_k=3)
     context_str = "\n---\n".join(retrieved_chunks) if retrieved_chunks else ""
 
-    # 2. Screen red flags in patient's message
-    red_flags = await screen_red_flags(query)
+    import asyncio
+    from app.integrations.ai.llm_service import _get_provider
 
-    # 3. Format history and augment with RAG context
-    formatted_conversation = list(conversation_history)
-    if context_str:
-        formatted_conversation.insert(
-            0,
-            {
-                "role": "system_context",
-                "text": f"Relevant patient medical records and lab documents:\n{context_str}",
-            },
+    provider = await _get_provider()
+
+    # 2. Single unified LLM call using RAG context (3x faster than 3 separate calls)
+    try:
+        ai_question, extracted_entities, red_flags = await asyncio.wait_for(
+            _unified_rag_turn(query, context_str, conversation_history, provider),
+            timeout=60.0,
         )
-
-    # 4. Generate next adaptive question
-    session_data = {
-        "conversation": formatted_conversation,
-        "covered_sections": [],
-        "current_section": "history_of_present_illness",
-    }
-    question_resp = await generate_adaptive_question(session_data)
-    ai_question = question_resp.get("question", "Could you tell me more about your symptoms?")
-
-    # 5. Extract structured entities from latest patient message
-    extraction_resp = await extract_structured_info(query, extraction_type="patient_turn")
-    extracted_entities = []
-    
-    if isinstance(extraction_resp, dict):
-        for k in ("symptoms", "medications", "past_history", "allergies"):
-            items = extraction_resp.get(k, [])
-            if isinstance(items, list):
-                for item in items:
-                    extracted_entities.append({"type": k, "value": str(item)})
+    except asyncio.TimeoutError:
+        logger.warning("Unified LLM call timed out, using safe fallback")
+        ai_question = "Could you describe your symptoms in more detail, including when they started?"
+        extracted_entities = []
+        red_flags = []
+    except Exception as exc:
+        logger.warning("Unified LLM call failed (%s), using safe fallback", exc)
+        ai_question = "Could you tell me more about what you're experiencing today?"
+        extracted_entities = []
+        red_flags = []
 
     return {
         "ai_prompt": ai_question,
@@ -161,6 +149,92 @@ async def rag_chat_turn(
         "red_flags": red_flags,
         "retrieved_context": retrieved_chunks,
     }
+
+
+async def _unified_rag_turn(
+    query: str,
+    context_str: str,
+    history: list,
+    provider: str,
+) -> tuple:
+    """
+    Single LLM call that simultaneously:
+    1. Generates the next clinical question (grounded in RAG context)
+    2. Extracts structured entities from patient query
+    3. Screens for red flags
+    Returns (ai_question: str, entities: list, red_flags: list)
+    """
+    # Format last 6 turns of history for context
+    recent = history[-6:] if len(history) > 6 else history
+    conv_text = "\n".join(
+        f"{t.get('role','?').capitalize()}: {t.get('text','')}"
+        for t in recent
+        if t.get("role") not in ("system_context",)
+    )
+
+    rag_block = f"\n--- PATIENT'S UPLOADED MEDICAL RECORDS ---\n{context_str}\n---\n" if context_str else ""
+
+    prompt = f"""You are MediKiosk, a clinical history-taking assistant in an Indian hospital OPD.
+{rag_block}
+CONVERSATION SO FAR:
+{conv_text}
+
+PATIENT JUST SAID: "{query}"
+
+Your task:
+1. Generate ONE short, empathetic follow-up question based on what the patient said AND their medical records above.
+2. Extract any symptoms/medicines/conditions mentioned by the patient.
+3. Identify any clinical red flags (e.g. chest pain, breathlessness, fainting, blood in stool).
+
+RULES:
+- Never diagnose. Never prescribe. Only ask and extract.
+- Keep the question conversational, patient-friendly, max 2 sentences.
+- Use the medical records to ask smarter, more relevant questions.
+
+Return ONLY valid JSON:
+{{
+  "question": "<your follow-up question here>",
+  "entities": [{{"type": "symptom|medicine|condition", "value": "..."}}],
+  "red_flags": [{{"description": "...", "severity": "low|medium|high|emergency"}}]
+}}"""
+
+    # Route to appropriate provider
+    if provider == "ollama":
+        from app.integrations.ai.ollama_service import _call_ollama, _extract_json
+        raw = await _call_ollama(prompt, system="")
+    elif provider == "gemini":
+        from app.integrations.ai.gemini_service import _call_gemini_raw
+        raw = await _call_gemini_raw(prompt)
+    elif provider == "nvidia":
+        from app.integrations.ai.nvidia_llm_service import _call_nvidia_raw
+        raw = await _call_nvidia_raw(prompt)
+    else:
+        # mock
+        return (
+            "Could you tell me more about your symptoms and when they started?",
+            [],
+            [],
+        )
+
+    try:
+        from app.integrations.ai.ollama_service import _extract_json
+        data = _extract_json(raw)
+        question = data.get("question", "Could you describe your symptoms further?")
+        entities = [
+            {"type": e.get("type", "symptom"), "value": str(e.get("value", ""))}
+            for e in data.get("entities", []) if isinstance(e, dict)
+        ]
+        red_flags = [
+            {"description": r.get("description", ""), "severity": r.get("severity", "low"), "category": "general"}
+            for r in data.get("red_flags", []) if isinstance(r, dict)
+        ]
+        return question, entities, red_flags
+    except Exception as exc:
+        logger.warning("JSON parse failed in unified turn: %s | raw=%s", exc, raw[:200])
+        # Extract plain question if JSON fails
+        lines = [l.strip() for l in raw.strip().splitlines() if "?" in l]
+        question = lines[0] if lines else "Could you describe your symptoms in more detail?"
+        return question, [], []
 
 
 async def rag_generate_summary(

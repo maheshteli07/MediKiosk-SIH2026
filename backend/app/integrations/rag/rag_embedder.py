@@ -133,17 +133,27 @@ async def embed_text(
             return vec
 
         except httpx.HTTPStatusError as exc:
-            logger.error("Embedding HTTP error: %s", exc)
-            raise
+            sc = exc.response.status_code if exc.response else 0
+            # 401/403 = key expired; log once at debug to avoid noise
+            if sc in (401, 403):
+                logger.debug("Embed key invalid (HTTP %d) – using deterministic vector", sc)
+            else:
+                logger.warning("Embedding API HTTP %d error – using deterministic embedding", sc)
+            vec = _mock_embedding(text)
+            _maybe_cache(key, vec)
+            return vec
         except Exception as exc:
             logger.warning("Embedding attempt %d failed: %s", attempt, exc)
             if attempt == 3:
                 logger.error("Embedding failed – falling back to mock vector")
                 vec = _mock_embedding(text)
+                _maybe_cache(key, vec)
                 return vec
             await asyncio.sleep(attempt)
 
-    return _mock_embedding(text)
+    vec = _mock_embedding(text)
+    _maybe_cache(key, vec)
+    return vec
 
 
 def _maybe_cache(key: str, vec: list[float]) -> None:

@@ -131,10 +131,19 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
 
 @app.on_event("startup")
 async def startup_event() -> None:
-    """Connect to MongoDB on startup."""
+    """Connect to MongoDB on startup and detect best available LLM provider."""
     logger.info("Starting %s v%s (MOCK_AI_MODE=%s) …",
                 settings.APP_NAME, settings.APP_VERSION, settings.MOCK_AI_MODE)
     await connect_to_mongo()
+
+    # Detect and cache the best available LLM provider (nvidia → gemini → ollama → mock)
+    if not settings.MOCK_AI_MODE:
+        try:
+            from app.integrations.ai.llm_service import resolve_provider
+            provider = await resolve_provider()
+            logger.info("LLM provider resolved: %s", provider.upper())
+        except Exception as exc:
+            logger.warning("LLM provider detection failed (will use mock): %s", exc)
 
 
 @app.on_event("shutdown")

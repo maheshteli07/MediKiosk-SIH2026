@@ -31,9 +31,10 @@ python-dotenv==1.0.1
 # paddleocr==2.7.3
 # pytesseract==0.3.10
 
-# AI / LLM – Gemini Integration (using httpx for direct REST calls)
+# AI / LLM
+openai>=1.30.0
 # google-genai==1.14.0           # Optional Gemini SDK
-# httpx is already listed above – used for direct Gemini REST calls
+# httpx is already listed above – used for direct API calls
 
 # Utilities
 python-dateutil==2.9.0

@@ -108,9 +108,71 @@ async def start_conversation(
     }
 
 
+async def direct_llm_chat_turn(
+    query: str,
+    conversation_history: List[Dict[str, str]],
+    language: str = "en",
+) -> tuple[str, list, list]:
+    """
+    Direct fast LLM consultation turn via NVIDIA NIM.
+    Generates clinical follow-up question, extracts symptoms/medicines, and checks red flags.
+    """
+    from app.integrations.ai.nvidia_llm_service import _call_nvidia_llm, _extract_json
+
+    recent = conversation_history[-6:] if len(conversation_history) > 6 else conversation_history
+    conv_text = "\n".join(
+        f"{t.get('role','?').capitalize()}: {t.get('text','')}"
+        for t in recent
+        if t.get("role") not in ("system_context",)
+    )
+
+    lang_instr = "Respond in Hindi." if language == "hi" else "Respond in English."
+
+    prompt = f"""You are MediKiosk, an empathetic clinical intake AI assistant in an Indian hospital OPD.
+Conversation so far:
+{conv_text}
+
+Patient says: "{query}"
+
+Instructions:
+1. Generate ONE short, empathetic clinical follow-up question (1-2 sentences). {lang_instr}
+2. Extract any symptoms, medicines, or duration mentioned.
+3. Identify clinical red flags if any (e.g. chest pain, breathing difficulty, fainting, high fever).
+
+CRITICAL: Start your response immediately with a JSON object on the first character. Do not include any explanations, thoughts, or markdown fences.
+{{
+  "question": "<your next question>",
+  "entities": [{{"type": "symptom|medicine|duration", "value": "..."}}],
+  "red_flags": [{{"description": "...", "severity": "low|medium|high|emergency"}}]
+}}"""
+
+    system_inst = "You are MediKiosk clinical documentation AI. Return ONLY a valid JSON object matching the requested schema. Never output markdown code fences, thought process, or introductory text."
+    try:
+        raw = await _call_nvidia_llm(prompt, max_tokens=600, system_prompt=system_inst, temperature=0.2)
+        data = _extract_json(raw)
+        question = data.get("question") or "Could you describe your symptoms in more detail?"
+        entities = [
+            {"type": e.get("type", "symptom"), "value": str(e.get("value", ""))}
+            for e in data.get("entities", []) if isinstance(e, dict) and e.get("value")
+        ]
+        red_flags = [
+            {"description": r.get("description", ""), "severity": r.get("severity", "low"), "category": "general"}
+            for r in data.get("red_flags", []) if isinstance(r, dict) and r.get("description")
+        ]
+        return question, entities, red_flags
+    except Exception as exc:
+        logger.warning("Direct LLM chat turn error: %s", exc)
+        return (
+            "Could you tell me more about your symptoms, like when they started and how severe they are?",
+            [{"type": "symptom", "value": query}] if len(query) < 40 else [],
+            [],
+        )
+
+
 async def process_message(
     db: Optional[AsyncIOMotorDatabase],
     session_id: str,
+
     message: Optional[str] = None,
     audio_base64: Optional[str] = None,
     language: str = "en",
@@ -121,10 +183,22 @@ async def process_message(
     """
     patient_text = (message or "").strip()
     if not patient_text and audio_base64:
-        patient_text = "I have been having pain and discomfort for the past few days."
+        try:
+            import base64
+            from app.integrations.speech.speech_service import transcribe_audio
+            clean_b64 = audio_base64
+            if "," in clean_b64:
+                clean_b64 = clean_b64.split(",", 1)[1]
+            raw_audio = base64.b64decode(clean_b64)
+            stt_res = await transcribe_audio(raw_audio, language=language)
+            patient_text = stt_res.get("transcript", "").strip()
+            logger.info("Transcribed audio turn to text: '%s'", patient_text)
+        except Exception as exc:
+            logger.warning("Audio transcription in process_message failed: %s", exc)
 
     if not patient_text:
         patient_text = "Not specified"
+
 
     # 1. Record patient message
     patient_msg = new_message_document(
@@ -160,18 +234,14 @@ async def process_message(
 
     history.append({"role": "patient", "text": patient_text})
 
-    # 3. Perform RAG-augmented turn
-    rag_result = await rag_chat_turn(
-        session_id=session_id,
+    # 3. Direct fast LLM chat turn
+    ai_prompt, extracted_entities, red_flags = await direct_llm_chat_turn(
         query=patient_text,
         conversation_history=history,
-        lang=language,
+        language=language,
     )
+    retrieved_context = []
 
-    ai_prompt = rag_result.get("ai_prompt", "Could you share more details about your symptoms?")
-    extracted_entities = rag_result.get("extracted_entities", [])
-    red_flags = rag_result.get("red_flags", [])
-    retrieved_context = rag_result.get("retrieved_context", [])
 
     # 4. Record AI reply
     ai_msg = new_message_document(
@@ -208,12 +278,14 @@ async def process_message(
 
     return {
         "session_id": session_id,
+        "patient_text": patient_text,
         "ai_prompt": ai_prompt,
         "extracted_entities": extracted_entities,
         "red_flags": red_flags,
         "is_complete": is_complete,
         "retrieved_context": retrieved_context,
     }
+
 
 
 async def get_conversation_session(

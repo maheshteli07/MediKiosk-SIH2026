@@ -225,11 +225,14 @@ async def red_flags_route(body: RedFlagScreenRequest):
             if isinstance(item, dict)
         ]
 
+        model_name = getattr(settings, "NVIDIA_LLM_MODEL", None) or getattr(settings, "LLM_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
+        source_name = getattr(settings, "LLM_PROVIDER", "nvidia")
+
         response = RedFlagScreenResponse(
             red_flags=validated_flags,
             screened_at=datetime.now(timezone.utc).isoformat(),
-            model="gemini-2.5-flash",
-            source="gemini",
+            model=model_name,
+            source=source_name,
         )
 
         return success_response(
