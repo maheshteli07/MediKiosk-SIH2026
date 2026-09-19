@@ -9,11 +9,11 @@
  */
 
 import React, { useState } from "react";
-import { Mic, Keyboard, Volume2, Sparkles, Check } from "lucide-react";
+import { Mic, Keyboard, Volume2, Sparkles, Check, FileText } from "lucide-react";
 import Button from "@/shared/components/Button.jsx";
 import LanguageSwitcher from "@/shared/components/LanguageSwitcher.jsx";
 
-function ConversationStart({ onStartMic, onStartType, currentLang, onLanguageChange }) {
+function ConversationStart({ onStartMic, onStartType, currentLang, onLanguageChange, uploadedDocs = [] }) {
   const [isListening, setIsListening] = useState(false);
 
   const handleMicClick = () => {
@@ -23,10 +23,13 @@ function ConversationStart({ onStartMic, onStartType, currentLang, onLanguageCha
     }, 600);
   };
 
+  const hasDocs = uploadedDocs && uploadedDocs.length > 0;
+  const primaryDoc = hasDocs ? uploadedDocs[0] : null;
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[500px] text-center px-4 py-8 max-w-xl mx-auto">
       {/* Top language selector bar */}
-      <div className="w-full flex items-center justify-between bg-primary-50 border border-primary-100 rounded-xl p-3 mb-8 shadow-sm">
+      <div className="w-full flex items-center justify-between bg-primary-50 border border-primary-100 rounded-xl p-3 mb-6 shadow-sm">
         <div className="flex items-center gap-2 text-primary-900 font-medium text-sm">
           <Volume2 className="w-4 h-4 text-primary-600 animate-pulse" />
           <span>Select your voice language:</span>
@@ -37,6 +40,33 @@ function ConversationStart({ onStartMic, onStartType, currentLang, onLanguageCha
         />
       </div>
 
+      {/* Uploaded Documents Alert Card */}
+      {hasDocs && (
+        <div className="w-full bg-primary-50/90 border border-primary-200 rounded-2xl p-4 mb-6 text-left shadow-sm flex items-start gap-3 animate-in fade-in duration-300">
+          <div className="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <FileText className="w-5 h-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-bold text-primary-900 uppercase tracking-wider">
+                {uploadedDocs.length} {uploadedDocs.length === 1 ? "Record" : "Records"} Connected
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary-200/80 text-primary-800">
+                OCR Analyzed
+              </span>
+            </div>
+            <p className="text-xs text-primary-900 mt-1 font-semibold truncate">
+              {primaryDoc.extractedData?.diagnosis?.value
+                ? `Prior Record: ${primaryDoc.extractedData.diagnosis.value}`
+                : primaryDoc.fileName}
+            </p>
+            <p className="text-[11px] text-primary-700 mt-0.5">
+              MediKiosk AI will open your case-taking session by asking how your condition and medications have responded.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Hero Badge */}
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-100 text-primary-800 text-xs font-semibold mb-6">
         <Sparkles className="w-3.5 h-3.5 text-primary-600" />
@@ -45,10 +75,12 @@ function ConversationStart({ onStartMic, onStartType, currentLang, onLanguageCha
 
       {/* Main Title & Subtitle */}
       <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-slate tracking-tight mb-3 leading-tight">
-        Tell us what health problem you are having
+        {hasDocs ? "Let's review your condition & symptoms" : "Tell us what health problem you are having"}
       </h1>
       <p className="text-base sm:text-lg text-slate-600 mb-10 max-w-md">
-        Tap the microphone below and speak naturally in your own language. No typing required.
+        {hasDocs
+          ? "Tap the microphone below. The AI will speak first with questions regarding your uploaded records."
+          : "Tap the microphone below and speak naturally in your own language. No typing required."}
       </p>
 
       {/* Big Kiosk Centered Microphone Button */}

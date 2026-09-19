@@ -42,6 +42,9 @@ from app.integrations.ai.ai_routes import router as ai_router
 # ── Speech router ──────────────────────────────────────────────────────────────
 from app.integrations.speech.speech_routes import router as speech_router
 
+# ── RAG router ─────────────────────────────────────────────────────────────────
+from app.integrations.rag.rag_routes import router as rag_router
+
 # ── Response helpers ───────────────────────────────────────────────────────────
 from app.utils.response import error_envelope
 
@@ -163,6 +166,9 @@ app.include_router(ai_router,           prefix=f"{API_PREFIX}/ai",          tags
 
 # Speech / ASR
 app.include_router(speech_router,       prefix=f"{API_PREFIX}/speech",      tags=["Speech"])
+
+# RAG
+app.include_router(rag_router,          prefix=f"{API_PREFIX}/rag",         tags=["RAG"])
 
 
 # ─────────────────────────────────────────────────────────────────────────────

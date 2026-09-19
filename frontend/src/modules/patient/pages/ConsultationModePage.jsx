@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { Layers, ArrowRight, Stethoscope, Leaf, Check } from "lucide-react";
 import PatientShell from "@/shared/components/PatientShell.jsx";
 import Button from "@/shared/components/Button.jsx";
+import { ROUTES } from "@/shared/constants/routes.js";
 import { setConsultationMode } from "@/modules/patient/services/patientService.js";
 
 function ConsultationModePage() {
@@ -38,7 +39,7 @@ function ConsultationModePage() {
     try {
       await setConsultationMode(sessionId, selectedMode);
       localStorage.setItem("medikiosk_consult_mode", selectedMode);
-      navigate("/conversation");
+      navigate(ROUTES.DOCUMENTS);
     } catch (err) {
       const message =
         err.response?.data?.error?.message ||
@@ -51,8 +52,23 @@ function ConsultationModePage() {
     }
   };
 
+  const handleSkipToConversation = async () => {
+    setError("");
+    const sessionId = localStorage.getItem("medikiosk_session_id");
+    try {
+      if (sessionId) {
+        await setConsultationMode(sessionId, selectedMode);
+      }
+      localStorage.setItem("medikiosk_consult_mode", selectedMode);
+      navigate(ROUTES.CONVERSATION);
+    } catch {
+      localStorage.setItem("medikiosk_consult_mode", selectedMode);
+      navigate(ROUTES.CONVERSATION);
+    }
+  };
+
   return (
-    <PatientShell showProgress step={5} totalSteps={6} centerContent={false}>
+    <PatientShell showProgress step={5} totalSteps={7} centerContent={false}>
       <div className="max-w-xl mx-auto space-y-6 py-2 text-center">
         {/* Header */}
         <div>
@@ -142,7 +158,7 @@ function ConsultationModePage() {
         </div>
 
         {/* CTA */}
-        <div className="pt-2 max-w-sm mx-auto">
+        <div className="pt-2 max-w-sm mx-auto space-y-3">
           <Button
             variant="primary"
             size="xl"
@@ -151,8 +167,16 @@ function ConsultationModePage() {
             loading={isLoading}
             fullWidth
           >
-            Start AI Voice Case-Taking
+            Continue to Document Upload
           </Button>
+
+          <button
+            type="button"
+            onClick={handleSkipToConversation}
+            className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors underline underline-offset-4"
+          >
+            I don't have past records &rarr; Skip to AI Case-Taking
+          </button>
         </div>
       </div>
     </PatientShell>

@@ -2,11 +2,12 @@
  * DocumentUploadPage.jsx – Prescriptions, lab reports, & scan document uploader with AI OCR.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, ArrowRight, FileCheck, Sparkles, Plus, FileSpreadsheet } from "lucide-react";
+import { Upload, ArrowRight, FileCheck, Sparkles, Plus, Trash2 } from "lucide-react";
 import PatientShell from "@/shared/components/PatientShell.jsx";
 import Button from "@/shared/components/Button.jsx";
+import { ROUTES } from "@/shared/constants/routes.js";
 
 import UploadZone from "../components/UploadZone.jsx";
 import CameraModal from "../components/CameraModal.jsx";
@@ -18,9 +19,25 @@ import { SAMPLE_DOCUMENTS } from "../data/mockDocumentData.js";
 
 function DocumentUploadPage() {
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState(() => {
+    try {
+      const saved = localStorage.getItem("medikiosk_uploaded_docs");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [processingQueue, setProcessingQueue] = useState([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+  // Sync documents to localStorage whenever updated
+  useEffect(() => {
+    try {
+      localStorage.setItem("medikiosk_uploaded_docs", JSON.stringify(documents));
+    } catch (err) {
+      console.error("Failed to save documents to localStorage", err);
+    }
+  }, [documents]);
 
   const handleFilesSelected = async (files) => {
     const newQueueItems = files.map((f, i) => ({
@@ -46,6 +63,11 @@ function DocumentUploadPage() {
     }
   };
 
+  const handleClearDocuments = () => {
+    setDocuments([]);
+    localStorage.removeItem("medikiosk_uploaded_docs");
+  };
+
   // Quick Preset Handlers for Demo Testing
   const handleLoadPresetClean = async () => {
     handleFilesSelected([{ name: "Prescription_Dr_Sharma.jpg", size: 1850000 }]);
@@ -56,7 +78,7 @@ function DocumentUploadPage() {
   };
 
   return (
-    <PatientShell showProgress step={6} totalSteps={6} centerContent={false}>
+    <PatientShell showProgress step={6} totalSteps={7} centerContent={false}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-6">
         <div>
@@ -68,18 +90,37 @@ function DocumentUploadPage() {
             Upload Old Prescriptions & Lab Reports
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Step 6 of 6 — Upload past medical records for your doctor to review.
+            Step 6 of 7 — Upload past medical records. AI will analyze them and personalize your intake.
           </p>
         </div>
 
-        {documents.length > 0 && (
+        {documents.length > 0 ? (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="md"
+              icon={Trash2}
+              onClick={handleClearDocuments}
+            >
+              Clear
+            </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              icon={ArrowRight}
+              onClick={() => navigate(ROUTES.CONVERSATION)}
+            >
+              Start AI Intake with Records
+            </Button>
+          </div>
+        ) : (
           <Button
-            variant="primary"
-            size="lg"
+            variant="ghost"
+            size="md"
             icon={ArrowRight}
-            onClick={() => navigate("/clinical/summary")}
+            onClick={() => navigate(ROUTES.CONVERSATION)}
           >
-            Finish & Review Summary
+            Skip to AI Intake
           </Button>
         )}
       </div>
@@ -146,6 +187,44 @@ function DocumentUploadPage() {
             onClick={() => handleLoadPresetClean()}
           >
             Try sample prescription
+          </Button>
+        </div>
+      )}
+
+      {/* Bottom Action Bar */}
+      {documents.length > 0 ? (
+        <div className="mt-8 p-5 bg-primary-50/80 border border-primary-200 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-primary-600 text-white flex items-center justify-center shadow-sm">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-primary-950">
+                {documents.length} Medical {documents.length === 1 ? "Record" : "Records"} Analyzed & Ready
+              </p>
+              <p className="text-xs text-primary-700">
+                MediKiosk AI will open your case-taking interview referencing these specific prescription & lab details.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="primary"
+            size="xl"
+            icon={ArrowRight}
+            onClick={() => navigate(ROUTES.CONVERSATION)}
+          >
+            Start AI Voice Case-Taking &rarr;
+          </Button>
+        </div>
+      ) : (
+        <div className="mt-8 text-center">
+          <Button
+            variant="secondary"
+            size="lg"
+            icon={ArrowRight}
+            onClick={() => navigate(ROUTES.CONVERSATION)}
+          >
+            Skip to AI Voice Case-Taking (Without Records)
           </Button>
         </div>
       )}

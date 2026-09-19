@@ -115,7 +115,7 @@ function BasicDetailsPage() {
   };
 
   return (
-    <PatientShell showProgress step={4} totalSteps={6} centerContent={false}>
+    <PatientShell showProgress step={4} totalSteps={7} centerContent={false}>
       <div className="max-w-xl mx-auto space-y-6 py-2">
         {/* Header */}
         <div className="text-center">

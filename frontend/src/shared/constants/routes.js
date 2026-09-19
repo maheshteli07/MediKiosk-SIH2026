@@ -15,8 +15,9 @@ export const ROUTES = {
   BASIC_DETAILS: "/patient/details",
   CONSULTATION_MODE: "/patient/mode",
 
-  // Conversation
+  // Conversation / Voice-Text AI Case-Taking (Step 7)
   CONVERSATION: "/conversation",
+  VOICE_TEXT:   "/conversation",   // alias – same page, explicit label for step 7
 
   // Documents
   DOCUMENTS: "/documents",
