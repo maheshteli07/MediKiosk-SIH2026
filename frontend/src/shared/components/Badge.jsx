@@ -12,17 +12,17 @@ import { Edit3, AlertTriangle, CheckCircle2, Leaf, Clock, Sparkles } from "lucid
 
 const VARIANT_CLASSES = {
   // Generic
-  default: "bg-slate-100 text-slate-700 border border-slate-200",
-  info: "bg-primary-50 text-primary-900 border border-primary-200",
-  success: "bg-emerald-50 text-emerald-900 border border-emerald-300",
-  warning: "bg-amber-50 text-amber-900 border border-amber-300",
-  danger: "bg-rose-50 text-rose-900 border border-rose-300",
-  ayush: "bg-amber-100/80 text-amber-950 border border-amber-400 font-bold",
+  default: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600",
+  info: "bg-primary-50 dark:bg-primary-900/30 text-primary-900 dark:text-primary-200 border border-primary-200 dark:border-primary-700/40",
+  success: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/40",
+  warning: "bg-amber-50 dark:bg-amber-900/30 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/40",
+  danger: "bg-rose-50 dark:bg-rose-900/30 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-700/40",
+  ayush: "bg-amber-100/80 dark:bg-amber-900/30 text-amber-950 dark:text-amber-200 border border-amber-400 dark:border-amber-600/50 font-bold",
 
   // MediKiosk case-status variants (Icon + High Contrast Text)
-  draft: "bg-sky-100 text-sky-950 border border-sky-300 font-semibold",
-  "needs-check": "bg-amber-100 text-amber-950 border border-amber-400 font-bold shadow-2xs",
-  "doctor-approved": "bg-emerald-100 text-emerald-950 border border-emerald-400 font-bold shadow-2xs",
+  draft: "bg-sky-100 dark:bg-sky-900/30 text-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-700/40 font-semibold",
+  "needs-check": "bg-amber-100 dark:bg-amber-900/40 text-amber-950 dark:text-amber-200 border border-amber-400 dark:border-amber-600/60 font-bold shadow-2xs",
+  "doctor-approved": "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-950 dark:text-emerald-200 border border-emerald-400 dark:border-emerald-600/60 font-bold shadow-2xs",
 };
 
 const VARIANT_ICONS = {

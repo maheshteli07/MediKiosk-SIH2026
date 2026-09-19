@@ -6,6 +6,7 @@
  *   - Fixed top bar (white, border-bottom) with breadcrumb, page title, user info.
  *   - Dense layout: small text, compact spacing — this is a professional tool.
  *   - Two-pane: sidebar (fixed) + scrollable main content area.
+ *   - Sun/Moon theme toggle in the top-bar (single location, affects all doctor pages).
  *
  * Props:
  *   children    — main content
@@ -22,9 +23,12 @@ import {
   CheckCircle2,
   LogOut,
   Stethoscope,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { ROUTES } from "@/shared/constants/routes.js";
 import authService from "@/services/authService.js";
+import { useTheme } from "@/App.jsx";
 
 const NAV_ITEMS = [
   {
@@ -74,6 +78,7 @@ function NavItem({ label, icon: Icon, to, end = false }) {
 
 function DoctorShell({ children, title, breadcrumb }) {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const currentUser = authService.getCurrentUser();
   const doctorName = currentUser?.sub
     ? currentUser.sub.split("@")[0].replace(/^dr\./i, "Dr. ")
@@ -85,11 +90,12 @@ function DoctorShell({ children, title, breadcrumb }) {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ backgroundColor: "#F6F7F9" }}>
+    <div
+      className="h-screen flex overflow-hidden bg-[#F6F7F9] dark:bg-[#0f1117]"
+    >
       {/* ── Fixed Sidebar ──────────────────────────────────────────────────── */}
       <aside
-        className="w-60 shrink-0 flex flex-col overflow-hidden"
-        style={{ backgroundColor: "#1B2430" }}
+        className="w-60 shrink-0 flex flex-col overflow-hidden bg-[#1B2430] dark:bg-[#0d1117]"
         aria-label="Sidebar navigation"
       >
         {/* Logo */}
@@ -150,29 +156,46 @@ function DoctorShell({ children, title, breadcrumb }) {
       {/* ── Right column ───────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="shrink-0 h-14 bg-white border-b border-slate-100 flex items-center justify-between px-6">
+        <header className="shrink-0 h-14 bg-white dark:bg-[#141822] border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between px-6">
           <div className="min-w-0">
             {breadcrumb && (
-              <p className="text-[11px] text-slate-400 mb-0.5 truncate">
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mb-0.5 truncate">
                 {breadcrumb}
               </p>
             )}
-            <h1 className="text-sm font-semibold text-slate-800 truncate">
+            <h1 className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
               {title || "Dashboard"}
             </h1>
           </div>
 
-          {/* Right-side actions (notifications, etc. can be added here) */}
+          {/* Right-side actions: user info + theme toggle */}
           <div className="flex items-center gap-3 shrink-0">
             <div className="text-right hidden sm:block">
-              <p className="text-xs font-medium text-slate-700">{doctorName}</p>
-              <p className="text-[10px] text-slate-400">General Medicine</p>
+              <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{doctorName}</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500">General Medicine</p>
             </div>
-            <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="text-primary-700 text-xs font-bold">
+            <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
+              <span className="text-primary-700 dark:text-primary-300 text-xs font-bold">
                 {doctorName.charAt(0).toUpperCase()}
               </span>
             </div>
+
+            {/* ── Theme Toggle ── */}
+            <button
+              type="button"
+              onClick={toggle}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className={[
+                "h-8 w-8 rounded-lg flex items-center justify-center",
+                "text-slate-500 dark:text-slate-400",
+                "hover:bg-slate-100 dark:hover:bg-slate-700",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                "transition-colors duration-150",
+              ].join(" ")}
+            >
+              {isDark ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+            </button>
           </div>
         </header>
 

@@ -89,7 +89,7 @@ function Modal({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-brand-slate/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-brand-slate/60 dark:bg-black/70 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -98,16 +98,16 @@ function Modal({
       <div
         ref={contentRef}
         className={[
-          "relative w-full bg-white rounded-xl shadow-xl overflow-hidden",
+          "relative w-full bg-white dark:bg-[#1e2535] rounded-xl shadow-xl overflow-hidden",
           "animate-in fade-in zoom-in-95 duration-150",
           sizeClass,
         ].join(" ")}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700/60">
           <h2
             id="modal-title"
-            className="text-base font-semibold text-slate-800"
+            className="text-base font-semibold text-slate-800 dark:text-slate-100"
           >
             {title}
           </h2>
@@ -115,8 +115,8 @@ function Modal({
             <button
               onClick={onClose}
               className={[
-                "p-1.5 rounded-lg text-slate-400",
-                "hover:text-slate-600 hover:bg-slate-100",
+                "p-1.5 rounded-lg text-slate-400 dark:text-slate-500",
+                "hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700",
                 "focus-visible:ring-2 focus-visible:ring-primary-500",
                 "transition-colors duration-150",
               ].join(" ")}
@@ -128,7 +128,7 @@ function Modal({
         </div>
 
         {/* Body */}
-        <div className="p-6">{children}</div>
+        <div className="p-6 text-slate-700 dark:text-slate-300">{children}</div>
       </div>
     </div>
   );

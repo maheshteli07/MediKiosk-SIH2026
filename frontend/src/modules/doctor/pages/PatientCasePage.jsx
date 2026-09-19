@@ -133,7 +133,7 @@ function PatientCasePage() {
         breadcrumb="Doctor Portal / Cases / Patient File"
       >
         <div className="space-y-6 max-w-7xl mx-auto pb-12">
-          <div className="flex items-center justify-between bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between bg-white dark:bg-[#1e2535] p-4 rounded-3xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
@@ -174,24 +174,23 @@ function PatientCasePage() {
           {/* Card 1: All Cases */}
           <div
             onClick={() => setStatusFilter("all")}
-            className={`bg-white rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${
-              statusFilter === "all"
-                ? "border-primary-500 ring-2 ring-primary-500/20 bg-primary-50/20"
-                : "border-slate-200 hover:border-slate-300"
-            }`}
+            className={`bg-white dark:bg-[#1e2535] rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${statusFilter === "all"
+                ? "border-primary-500 ring-2 ring-primary-500/20 bg-primary-50/20 dark:bg-primary-900/10"
+                : "border-slate-200 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600"
+              }`}
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 All Cases
               </p>
-              <h3 className="text-3xl font-extrabold text-slate-900 mt-1">
+              <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-1">
                 {allCount}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Total intake records
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <FileSearch className="w-6 h-6" />
             </div>
           </div>
@@ -199,24 +198,23 @@ function PatientCasePage() {
           {/* Card 2: Needs Check */}
           <div
             onClick={() => setStatusFilter("needs_check")}
-            className={`bg-white rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${
-              statusFilter === "needs_check"
-                ? "border-amber-500 ring-2 ring-amber-500/20 bg-amber-50/20"
-                : "border-amber-200 hover:border-amber-300"
-            }`}
+            className={`bg-white dark:bg-[#1e2535] rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${statusFilter === "needs_check"
+                ? "border-amber-500 ring-2 ring-amber-500/20 bg-amber-50/20 dark:bg-amber-900/10"
+                : "border-amber-200 dark:border-amber-900/50 hover:border-amber-300 dark:hover:border-amber-700/60"
+              }`}
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-amber-700">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
                 Needs Check
               </p>
-              <h3 className="text-3xl font-extrabold text-slate-900 mt-1">
+              <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-1">
                 {needsCheckCount}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Doctor check required
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <AlertCircle className="w-6 h-6" />
             </div>
           </div>
@@ -224,24 +222,23 @@ function PatientCasePage() {
           {/* Card 3: Awaiting Review */}
           <div
             onClick={() => setStatusFilter("draft")}
-            className={`bg-white rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${
-              statusFilter === "draft"
-                ? "border-sky-500 ring-2 ring-sky-500/20 bg-sky-50/20"
-                : "border-sky-200 hover:border-sky-300"
-            }`}
+            className={`bg-white dark:bg-[#1e2535] rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${statusFilter === "draft"
+                ? "border-sky-500 ring-2 ring-sky-500/20 bg-sky-50/20 dark:bg-sky-900/10"
+                : "border-sky-200 dark:border-sky-900/50 hover:border-sky-300 dark:hover:border-sky-700/60"
+              }`}
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-sky-700">
+              <p className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400">
                 Awaiting Review
               </p>
-              <h3 className="text-3xl font-extrabold text-slate-900 mt-1">
+              <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-1">
                 {draftCount}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Intake drafts ready
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-2xl bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <Clock className="w-6 h-6" />
             </div>
           </div>
@@ -249,46 +246,45 @@ function PatientCasePage() {
           {/* Card 4: Approved */}
           <div
             onClick={() => setStatusFilter("doctor_approved")}
-            className={`bg-white rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${
-              statusFilter === "doctor_approved"
-                ? "border-success-500 ring-2 ring-success-500/20 bg-success-50/20"
-                : "border-success-200 hover:border-success-300"
-            }`}
+            className={`bg-white dark:bg-[#1e2535] rounded-3xl p-5 shadow-sm border transition-all cursor-pointer flex items-center justify-between group hover:shadow-md ${statusFilter === "doctor_approved"
+                ? "border-success-500 ring-2 ring-success-500/20 bg-success-50/20 dark:bg-emerald-900/10"
+                : "border-success-200 dark:border-emerald-900/50 hover:border-success-300 dark:hover:border-emerald-700/60"
+              }`}
           >
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-success-700">
+              <p className="text-xs font-bold uppercase tracking-wider text-success-700 dark:text-emerald-400">
                 Approved
               </p>
-              <h3 className="text-3xl font-extrabold text-slate-900 mt-1">
+              <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-1">
                 {approvedCount}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Signed off & locked
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Signed off &amp; locked
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-success-100 text-success-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-2xl bg-success-100 dark:bg-emerald-900/30 text-success-700 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <CheckCircle2 className="w-6 h-6" />
             </div>
           </div>
         </div>
 
         {/* ── 2. Search and Filter Bar ──────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-[#1e2535] border border-slate-200 dark:border-slate-700/60 rounded-3xl p-4 shadow-sm space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative flex-1 max-w-lg">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by patient name, case ID, symptoms..."
-                className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-[#0f1117] text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 p-0.5 rounded-full"
                   aria-label="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -298,13 +294,13 @@ function PatientCasePage() {
 
             {/* Sort & Action Controls */}
             <div className="flex items-center gap-2.5 self-end md:self-auto shrink-0">
-              <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
-                <ArrowUpDown className="w-3.5 h-3.5 text-slate-500" />
-                <span className="text-[11px] font-medium text-slate-500">Sort:</span>
+              <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5">
+                <ArrowUpDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sort:</span>
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
-                  className="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer"
+                  className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer"
                 >
                   <option value="recent">Recent First</option>
                   <option value="longest_wait">Longest Wait First</option>
@@ -316,7 +312,7 @@ function PatientCasePage() {
                   variant="ghost"
                   size="sm"
                   onClick={handleClearFilters}
-                  className="text-xs text-primary-600 hover:text-primary-800 font-semibold"
+                  className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-semibold"
                 >
                   Reset Filters
                 </Button>
@@ -325,7 +321,7 @@ function PatientCasePage() {
           </div>
 
           {/* Status Tabs Filter */}
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-between overflow-x-auto">
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between overflow-x-auto">
             <Tabs
               tabs={filterTabs}
               activeTab={statusFilter}
@@ -333,7 +329,7 @@ function PatientCasePage() {
               variant="pill"
             />
 
-            <span className="text-xs font-medium text-slate-400 hidden sm:block">
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500 hidden sm:block">
               Showing {filteredCases.length} of {allCount} cases
             </span>
           </div>
@@ -342,7 +338,7 @@ function PatientCasePage() {
         {/* ── 3. Case List / Table ──────────────────────────────────────────── */}
         <div className="space-y-3">
           {filteredCases.length === 0 ? (
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div className="bg-white dark:bg-[#1e2535] border border-slate-200 dark:border-slate-700/60 rounded-3xl p-8 shadow-sm">
               <EmptyState
                 icon={FileSearch}
                 heading="No cases found"
@@ -352,45 +348,45 @@ function PatientCasePage() {
               />
             </div>
           ) : (
-            <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm divide-y divide-slate-100">
+            <div className="bg-white dark:bg-[#1e2535] border border-slate-200 dark:border-slate-700/60 rounded-3xl overflow-hidden shadow-sm divide-y divide-slate-100 dark:divide-slate-700/60">
               {filteredCases.map((item) => {
                 return (
                   <div
                     key={item.id}
                     onClick={() => handleSelectCase(item)}
-                    className="p-5 hover:bg-slate-50/80 transition-all cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 group"
+                    className="p-5 hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-all cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4 group"
                   >
                     {/* Left Column: Patient Info & Chief Complaint */}
                     <div className="space-y-2 flex-1 min-w-0">
                       {/* Name, Demographic, ID Row */}
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 flex items-center justify-center font-bold text-xs shrink-0">
                             {item.patientName.charAt(0)}
                           </div>
-                          <h4 className="text-sm font-bold text-slate-900 group-hover:text-primary-700 transition-colors">
+                          <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
                             {item.patientName}
                           </h4>
                         </div>
 
-                        <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-md">
                           {item.age}y / {item.gender}
                         </span>
 
-                        <span className="text-xs font-mono font-bold text-primary-700 bg-primary-50 border border-primary-200 px-2 py-0.5 rounded-md">
+                        <span className="text-xs font-mono font-bold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700/40 px-2 py-0.5 rounded-md">
                           {item.patientId}
                         </span>
 
                         {item.bloodGroup && (
-                          <span className="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md">
+                          <span className="text-[11px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-700/40 px-2 py-0.5 rounded-md">
                             {item.bloodGroup}
                           </span>
                         )}
                       </div>
 
                       {/* Chief Complaint / Symptoms */}
-                      <p className="text-xs text-slate-700 leading-relaxed max-w-3xl">
-                        <span className="font-semibold text-slate-900">Complaint: </span>
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed max-w-3xl">
+                        <span className="font-semibold text-slate-900 dark:text-slate-200">Complaint: </span>
                         {item.chiefComplaint}
                       </p>
 
@@ -400,7 +396,7 @@ function PatientCasePage() {
                           {item.summaryDraft.symptoms.slice(0, 3).map((sym, idx) => (
                             <span
                               key={idx}
-                              className="text-[11px] text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full flex items-center gap-1"
+                              className="text-[11px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded-full flex items-center gap-1"
                             >
                               <Activity className="w-3 h-3 text-primary-500" />
                               {sym.name}
@@ -416,7 +412,7 @@ function PatientCasePage() {
                     </div>
 
                     {/* Right Column: Badges, Time, and Open Arrow */}
-                    <div className="flex items-center justify-between md:justify-end gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+                    <div className="flex items-center justify-between md:justify-end gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-700/60">
                       {/* Status Badges & Docs Indicator */}
                       <div className="flex items-center gap-2">
                         {item.status === "doctor_approved" && (
@@ -436,7 +432,7 @@ function PatientCasePage() {
                         )}
 
                         {item.hasUploadedDocs && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded-full">
                             <FileText className="w-3 h-3 text-primary-600" />
                             Docs attached
                           </span>
@@ -445,16 +441,16 @@ function PatientCasePage() {
 
                       {/* Wait Time */}
                       <div className="text-right hidden sm:block min-w-[70px]">
-                        <span className="text-xs font-semibold text-slate-500 flex items-center justify-end gap-1">
-                          <Clock className="w-3 h-3 text-slate-400" />
+                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center justify-end gap-1">
+                          <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                           {item.waitTime}
                         </span>
                       </div>
 
                       {/* Open Case Action */}
-                      <div className="flex items-center gap-1 text-xs font-bold text-primary-600 group-hover:text-primary-700 group-hover:translate-x-0.5 transition-all">
+                      <div className="flex items-center gap-1 text-xs font-bold text-primary-600 dark:text-primary-400 group-hover:text-primary-700 dark:group-hover:text-primary-300 group-hover:translate-x-0.5 transition-all">
                         <span className="hidden sm:inline">Open Case</span>
-                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-primary-600 transition-colors" />
+                        <ChevronRight className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
                       </div>
                     </div>
                   </div>

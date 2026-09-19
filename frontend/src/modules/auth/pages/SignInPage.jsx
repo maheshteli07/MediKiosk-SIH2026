@@ -135,7 +135,7 @@ function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 font-sans antialiased text-slate-800">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 dark:bg-[#0f1117] font-sans antialiased text-slate-800 dark:text-slate-100">
       {/* ── Left Hero Panel ────────────────────────────────────────────────────────── */}
       <div
         className="lg:w-[460px] xl:w-[500px] shrink-0 p-8 sm:p-12 flex flex-col justify-between text-white relative overflow-hidden"
@@ -236,20 +236,20 @@ function SignInPage() {
       </div>
 
       {/* ── Right Sign-In Form ──────────────────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-white dark:bg-[#141822]">
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
               Sign in to your Account
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               Select your user role below to access the corresponding workspace.
             </p>
           </div>
 
           {/* Role Selection Segmented Switcher */}
-          <div className="bg-slate-200/70 p-1.5 rounded-2xl flex items-center gap-1 shadow-inner">
+          <div className="bg-slate-200/70 dark:bg-slate-800 p-1.5 rounded-2xl flex items-center gap-1 shadow-inner">
             <button
               type="button"
               onClick={() => handleRoleChange("doctor")}
@@ -320,7 +320,7 @@ function SignInPage() {
                       ? "dr.ankit@medikiosk.in"
                       : "abha.9182374650@abdm"
                   }
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-white dark:bg-[#1e2535] border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -352,7 +352,7 @@ function SignInPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-3 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm"
+                  className="w-full pl-10 pr-10 py-3 bg-white dark:bg-[#1e2535] border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm"
                 />
                 <button
                   type="button"
@@ -400,21 +400,21 @@ function SignInPage() {
           </form>
 
           {/* Quick Demo Credentials / Shortcuts */}
-          <div className="pt-6 border-t border-slate-200/80 space-y-3">
+          <div className="pt-6 border-t border-slate-200/80 dark:border-slate-700/60 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                 ⚡ Quick Dev Shortcuts
               </span>
-              <span className="text-[11px] text-slate-400 font-medium">Click to auto-fill</span>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Click to auto-fill</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => applyPreset("dr.ankit@medikiosk.in", "doctor")}
-                className="p-2.5 text-left rounded-xl bg-slate-100 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 transition-all text-xs group"
+                className="p-2.5 text-left rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all text-xs group"
               >
-                <div className="font-semibold text-slate-800 group-hover:text-emerald-900 flex items-center gap-1.5">
+                <div className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-emerald-900 dark:group-hover:text-emerald-300 flex items-center gap-1.5">
                   <Stethoscope className="w-3.5 h-3.5 text-emerald-600" /> Dr. Ankit (Cardiology)
                 </div>
                 <div className="text-[10px] text-slate-500 group-hover:text-emerald-700 mt-0.5">
@@ -425,9 +425,9 @@ function SignInPage() {
               <button
                 type="button"
                 onClick={() => applyPreset("abha.9182374650@abdm", "patient")}
-                className="p-2.5 text-left rounded-xl bg-slate-100 hover:bg-teal-50 border border-slate-200 hover:border-teal-300 transition-all text-xs group"
+                className="p-2.5 text-left rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-900/20 border border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-700 transition-all text-xs group"
               >
-                <div className="font-semibold text-slate-800 group-hover:text-teal-900 flex items-center gap-1.5">
+                <div className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-teal-900 dark:group-hover:text-teal-300 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 text-teal-600" /> Patient Check-In
                 </div>
                 <div className="text-[10px] text-slate-500 group-hover:text-teal-700 mt-0.5">
@@ -441,7 +441,7 @@ function SignInPage() {
           <div className="text-center pt-2">
             <button
               onClick={() => navigate("/")}
-              className="text-xs text-slate-500 hover:text-emerald-700 font-medium transition-colors inline-flex items-center gap-1"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition-colors inline-flex items-center gap-1"
             >
               ← Return to Role Selection Landing
             </button>

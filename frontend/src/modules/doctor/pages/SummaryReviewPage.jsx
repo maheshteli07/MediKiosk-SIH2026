@@ -43,7 +43,7 @@ function SummaryReviewPage() {
     >
       <div className="space-y-6 max-w-7xl mx-auto pb-24">
         {/* Navigation Top Bar */}
-        <div className="flex items-center justify-between bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="flex items-center justify-between bg-white dark:bg-[#1e2535] p-4 rounded-3xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
           <Button
             variant="ghost"
             size="sm"
@@ -53,10 +53,10 @@ function SummaryReviewPage() {
             Back to Queue
           </Button>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-            <span>Wait Time: <strong className="text-slate-800">{currentCase.waitTime}</strong></span>
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <span>Wait Time: <strong className="text-slate-800 dark:text-slate-200">{currentCase.waitTime}</strong></span>
             <span>•</span>
-            <span>Assigned: <strong className="text-slate-800">{currentCase.doctorAssigned}</strong></span>
+            <span>Assigned: <strong className="text-slate-800 dark:text-slate-200">{currentCase.doctorAssigned}</strong></span>
           </div>
         </div>
 

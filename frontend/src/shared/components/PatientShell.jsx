@@ -5,7 +5,7 @@
  *   - Full-bleed background (#F6F7F9), no sidebar, no distracting chrome.
  *   - Centered content column (max-w-2xl) for comfortable tablet reading.
  *   - Large fonts — body text is readable from kiosk distance.
- *   - Slim top bar: logo + LanguageSwitcher only.
+ *   - Slim top bar: logo + LanguageSwitcher + theme toggle.
  *   - Optional step-progress indicator at the bottom.
  *
  * Props:
@@ -18,8 +18,10 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { Sun, Moon } from "lucide-react";
 import { ROUTES } from "@/shared/constants/routes.js";
 import LanguageSwitcher from "@/shared/components/LanguageSwitcher.jsx";
+import { useTheme } from "@/App.jsx";
 
 function PatientShell({
   children,
@@ -28,10 +30,12 @@ function PatientShell({
   showProgress = false,
   centerContent = true,
 }) {
+  const { isDark, toggle } = useTheme();
+
   return (
-    <div className="min-h-screen bg-brand-bg flex flex-col">
+    <div className="min-h-screen bg-brand-bg dark:bg-[#0f1117] flex flex-col">
       {/* ── Top bar ──────────────────────────────────────────────────────── */}
-      <header className="shrink-0 bg-white border-b border-slate-100 px-6 py-3.5">
+      <header className="shrink-0 bg-white dark:bg-[#141822] border-b border-slate-100 dark:border-slate-700/60 px-6 py-3.5">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -54,17 +58,34 @@ function PatientShell({
               </svg>
             </div>
             <div>
-              <span className="block text-base font-bold text-primary-900 leading-tight tracking-tight">
+              <span className="block text-base font-bold text-primary-900 dark:text-primary-300 leading-tight tracking-tight">
                 MediKiosk
               </span>
-              <span className="block text-xs text-slate-400 leading-none">
+              <span className="block text-xs text-slate-400 dark:text-slate-500 leading-none">
                 Patient Registration
               </span>
             </div>
           </Link>
 
-          {/* Language switcher */}
-          <LanguageSwitcher />
+          {/* Right: Language switcher + Theme toggle */}
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <button
+              type="button"
+              onClick={toggle}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className={[
+                "h-9 w-9 rounded-xl flex items-center justify-center",
+                "text-slate-500 dark:text-slate-400",
+                "hover:bg-slate-100 dark:hover:bg-slate-700",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+                "transition-colors duration-150",
+              ].join(" ")}
+            >
+              {isDark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -96,7 +117,7 @@ function PatientShell({
                   "h-2 rounded-full transition-all duration-300",
                   past    ? "w-6 bg-primary-500"   : "",
                   current ? "w-6 bg-primary-300"   : "",
-                  !past && !current ? "w-2 bg-slate-200" : "",
+                  !past && !current ? "w-2 bg-slate-200 dark:bg-slate-700" : "",
                 ].join(" ")}
                 aria-hidden="true"
               />

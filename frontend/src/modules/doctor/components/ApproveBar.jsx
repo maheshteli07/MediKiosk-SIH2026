@@ -14,7 +14,7 @@ function ApproveBar({ status, onApprove, onRequestChanges, doctorName = "Dr. Ank
   const isApproved = status === "doctor_approved";
 
   return (
-    <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur border-t border-slate-200 p-4 shadow-lg rounded-b-3xl">
+    <div className="sticky bottom-0 z-20 bg-white/95 dark:bg-[#141822]/95 backdrop-blur border-t border-slate-200 dark:border-slate-700/60 p-4 shadow-lg rounded-b-3xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 max-w-6xl mx-auto">
         {/* Left Status Indicator */}
         <div className="flex items-center gap-3">
@@ -32,14 +32,14 @@ function ApproveBar({ status, onApprove, onRequestChanges, doctorName = "Dr. Ank
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-800">Case Review Status:</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Case Review Status:</span>
               {isApproved ? (
                 <Badge variant="doctor-approved" size="md">
-                  Doctor Approved & Signed Off
+                  Doctor Approved &amp; Signed Off
                 </Badge>
               ) : status === "needs_check" ? (
                 <Badge variant="needs-check" size="md">
-                  Review & Verify AI Draft
+                  Review &amp; Verify AI Draft
                 </Badge>
               ) : (
                 <Badge variant="draft" size="md">
@@ -47,7 +47,7 @@ function ApproveBar({ status, onApprove, onRequestChanges, doctorName = "Dr. Ank
                 </Badge>
               )}
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
               {isApproved
                 ? `Signed off by ${doctorName} on ${new Date().toLocaleDateString()}`
                 : "Verify source evidence before approving"}
@@ -59,9 +59,9 @@ function ApproveBar({ status, onApprove, onRequestChanges, doctorName = "Dr. Ank
         <div className="flex items-center gap-3">
           {isApproved ? (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-success-700 font-bold bg-success-50 border border-success-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-success-600" />
-                Case Approved & Locked
+              <span className="text-xs text-success-700 dark:text-emerald-400 font-bold bg-success-50 dark:bg-emerald-900/30 border border-success-200 dark:border-emerald-700/40 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-success-600 dark:text-emerald-400" />
+                Case Approved &amp; Locked
               </span>
               <Button variant="ghost" size="sm" icon={RotateCcw} onClick={onRequestChanges}>
                 Re-open for Edits
@@ -79,7 +79,7 @@ function ApproveBar({ status, onApprove, onRequestChanges, doctorName = "Dr. Ank
                 onClick={onApprove}
                 className="bg-success-600 hover:bg-success-700 text-white border-none shadow-md shadow-success-600/30"
               >
-                Approve Case & Sign Off
+                Approve Case &amp; Sign Off
               </Button>
             </>
           )}

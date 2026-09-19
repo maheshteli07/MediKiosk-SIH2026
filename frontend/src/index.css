@@ -52,6 +52,15 @@
   --radius-xl:  1rem;
 }
 
+/* Dark mode overrides via CSS custom properties */
+.dark {
+  --color-bg:           #0f1117;
+  --color-surface:      #1a1f2e;
+  --color-border:       #2a3040;
+  --color-text:         #e8ecf1;
+  --color-text-muted:   #8a94a6;
+}
+
 /* 4. Base styles */
 *,
 *::before,

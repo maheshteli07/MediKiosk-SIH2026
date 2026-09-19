@@ -32,8 +32,8 @@ function PatientQueuePage() {
   return (
     <DoctorShell title="Patient Queue" subtitle="Manage and inspect pending patient case handovers">
       <div className="space-y-6 max-w-6xl mx-auto">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-          <h2 className="text-lg font-bold text-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
             Pending Handover Queue ({filteredQueue.length})
           </h2>
 

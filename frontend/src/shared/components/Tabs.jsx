@@ -32,8 +32,8 @@ function Tabs({
       className={[
         "flex",
         variant === "pill"
-          ? "gap-1 bg-slate-100 p-1 rounded-lg w-fit"
-          : "gap-0 border-b border-slate-200",
+          ? "gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-fit"
+          : "gap-0 border-b border-slate-200 dark:border-slate-700/60",
         className,
       ]
         .filter(Boolean)
@@ -60,14 +60,14 @@ function Tabs({
                     "px-1 pb-3 pt-0.5 text-sm mr-6",
                     "border-b-2 -mb-px",
                     isActive
-                      ? "border-primary-500 text-primary-600"
-                      : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300",
+                      ? "border-primary-500 text-primary-600 dark:text-primary-400"
+                      : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600",
                   ].join(" ")
                 : [
                     "px-3 py-1.5 text-sm rounded-md",
                     isActive
-                      ? "bg-white text-primary-700 shadow-sm font-semibold"
-                      : "text-slate-500 hover:text-slate-700",
+                      ? "bg-white dark:bg-[#1e2535] text-primary-700 dark:text-primary-300 shadow-sm font-semibold"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200",
                   ].join(" "),
             ]
               .filter(Boolean)

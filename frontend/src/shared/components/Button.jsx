@@ -15,11 +15,11 @@ const VARIANT_CLASSES = {
     "bg-primary-500 text-white hover:bg-primary-700 active:bg-primary-900 " +
     "focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
   secondary:
-    "bg-white text-primary-500 border-2 border-primary-500 " +
-    "hover:bg-primary-50 active:bg-primary-100 " +
+    "bg-white dark:bg-[#1e2535] text-primary-500 dark:text-primary-400 border-2 border-primary-500 dark:border-primary-600 " +
+    "hover:bg-primary-50 dark:hover:bg-primary-900/20 active:bg-primary-100 dark:active:bg-primary-900/40 " +
     "focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
   ghost:
-    "bg-transparent text-slate-600 hover:bg-slate-100 active:bg-slate-200 " +
+    "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 active:bg-slate-200 dark:active:bg-slate-700 " +
     "focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2",
   danger:
     "bg-danger text-white hover:bg-danger-dark active:bg-danger-dark " +
@@ -47,6 +47,7 @@ function Button({
   onClick,
   type = "button",
   className = "",
+  icon: Icon,
   ...props
 }) {
   const variantClass = VARIANT_CLASSES[variant] ?? VARIANT_CLASSES.primary;
@@ -93,6 +94,7 @@ function Button({
           />
         </svg>
       )}
+      {!loading && Icon && <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />}
       {children}
     </button>
   );

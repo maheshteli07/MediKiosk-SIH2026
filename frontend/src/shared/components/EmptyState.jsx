@@ -48,9 +48,9 @@ function EmptyState({
       aria-live="polite"
     >
       {Icon && (
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
           <Icon
-            className="h-8 w-8 text-slate-400"
+            className="h-8 w-8 text-slate-400 dark:text-slate-500"
             strokeWidth={1.5}
             aria-hidden="true"
           />
@@ -58,11 +58,11 @@ function EmptyState({
       )}
 
       {heading && (
-        <h3 className="text-base font-semibold text-slate-700">{heading}</h3>
+        <h3 className="text-base font-semibold text-slate-700 dark:text-slate-300">{heading}</h3>
       )}
 
       {subtext && (
-        <p className="mt-1.5 max-w-xs text-sm leading-relaxed text-slate-400">
+        <p className="mt-1.5 max-w-xs text-sm leading-relaxed text-slate-400 dark:text-slate-500">
           {subtext}
         </p>
       )}
@@ -71,8 +71,8 @@ function EmptyState({
         <button
           onClick={onAction}
           className={[
-            "mt-5 text-sm font-semibold text-primary-500",
-            "hover:text-primary-700 underline underline-offset-2",
+            "mt-5 text-sm font-semibold text-primary-500 dark:text-primary-400",
+            "hover:text-primary-700 dark:hover:text-primary-300 underline underline-offset-2",
             "focus-visible:outline-none focus-visible:ring-2",
             "focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded",
             "transition-colors duration-150",
