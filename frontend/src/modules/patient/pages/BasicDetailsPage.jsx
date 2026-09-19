@@ -8,6 +8,7 @@ import { ClipboardList, ArrowRight, User, Phone, Calendar, Heart } from "lucide-
 import PatientShell from "@/shared/components/PatientShell.jsx";
 import Button from "@/shared/components/Button.jsx";
 import Input from "@/shared/components/Input.jsx";
+import { createPatient } from "@/modules/patient/services/patientService.js";
 
 function BasicDetailsPage() {
   const navigate = useNavigate();
@@ -20,13 +21,45 @@ function BasicDetailsPage() {
     emergencyContact: "9876500000",
     bloodGroup: "B+",
   });
+  const [saveError, setSaveError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (field, val) => {
     setFormData((prev) => ({ ...prev, [field]: val }));
   };
 
-  const handleContinue = () => {
-    navigate("/patient/mode");
+  const handleContinue = async () => {
+    setSaveError("");
+    setIsSaving(true);
+
+    try {
+      const response = await createPatient({
+        full_name: formData.fullName,
+        age: Number(formData.age),
+        gender: formData.gender.toLowerCase(),
+        phone: formData.phone,
+      });
+      const patient = response.data?.patient;
+
+      if (!response.success || !patient?.id) {
+        throw new Error(response.error?.message || "The patient record could not be saved.");
+      }
+
+      localStorage.setItem("medikiosk_patient_id", patient.id);
+      localStorage.setItem("medikiosk_patient", JSON.stringify(patient));
+      if (response.data.access_token) {
+        localStorage.setItem("medikiosk_token", response.data.access_token);
+      }
+      navigate("/patient/mode");
+    } catch (error) {
+      const message = error.response?.data?.error?.message
+        || error.response?.data?.detail
+        || error.message
+        || "Unable to save the patient record. Please retry.";
+      setSaveError(typeof message === "string" ? message : "Please check the entered details and retry.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -44,6 +77,12 @@ function BasicDetailsPage() {
             Confirm your demographic details for your medical file.
           </p>
         </div>
+
+        {saveError && (
+          <div role="alert" className="rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+            {saveError}
+          </div>
+        )}
 
         {/* Form Container */}
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4 text-left">
@@ -112,6 +151,7 @@ function BasicDetailsPage() {
             size="xl"
             icon={ArrowRight}
             onClick={handleContinue}
+            loading={isSaving}
             fullWidth
           >
             Save & Choose Consultation Mode

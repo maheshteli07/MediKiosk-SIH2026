@@ -14,10 +14,8 @@ import api from "@/services/api.js";
  * POST /api/patients
  */
 export async function createPatient(patientData) {
-  // TODO: Implement
-  // const response = await api.post("/api/patients", patientData);
-  // return response.data;
-  throw new Error("Not implemented");
+  const response = await api.post("/api/patients/", patientData);
+  return response.data;
 }
 
 /**
@@ -25,10 +23,8 @@ export async function createPatient(patientData) {
  * GET /api/patients/:patientId
  */
 export async function getPatientById(patientId) {
-  // TODO: Implement
-  // const response = await api.get(`/api/patients/${patientId}`);
-  // return response.data;
-  throw new Error("Not implemented");
+  const response = await api.get(`/api/patients/${patientId}`);
+  return response.data;
 }
 
 /**
@@ -36,8 +32,6 @@ export async function getPatientById(patientId) {
  * PUT /api/patients/:patientId
  */
 export async function updatePatient(patientId, data) {
-  // TODO: Implement
-  // const response = await api.put(`/api/patients/${patientId}`, data);
-  // return response.data;
-  throw new Error("Not implemented");
+  const response = await api.put(`/api/patients/${patientId}`, data);
+  return response.data;
 }
