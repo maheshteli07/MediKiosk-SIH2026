@@ -29,6 +29,10 @@ export const ROUTES = {
   TIMELINE: "/clinical/timeline",
   CLINICAL_SUMMARY: "/clinical/summary",
 
+  // Auth
+  SIGN_IN: "/signin",
+  LOGIN: "/login",
+
   // Doctor
   DOCTOR_LOGIN: "/doctor/login",
   DOCTOR_DASHBOARD: "/doctor/dashboard",

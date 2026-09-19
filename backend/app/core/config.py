@@ -1,96 +1,203 @@
-"""
-core/config.py – Application Configuration
-===========================================
-Centralised Pydantic-Settings class.  Import `settings` everywhere.
+"""Centralised, type-safe environment configuration for MediKiosk.
 
-Key flags
----------
-MOCK_AI_MODE (bool, default True)
-    When True all AI / OCR / Speech integrations return canned responses so
-    the demo works without any paid API keys.  Set to False in production.
-
-CORS note
----------
-CORS_ORIGINS_STR is stored as a raw comma-separated string in .env
-(pydantic-settings v2 can't auto-parse List[str] from plain .env without
-JSON brackets).  Use `settings.cors_origins_list` (a @property) everywhere
-you need the parsed list.  main.py reads that property.
+Import the single ``settings`` instance from this module; modules must not
+create their own ``Settings`` objects.
 """
 
 from __future__ import annotations
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Annotated, Literal
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """Application settings read from the backend ``.env`` file."""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=True,
         extra="ignore",
     )
 
-    # ── Application ────────────────────────────────────────────
-    APP_NAME: str = "MediKiosk"
-    APP_VERSION: str = "0.1.0"
-    APP_ENV: str = "development"
-    DEBUG: bool = True
+    # Application
+    app_name: str = "MediKiosk"
+    app_version: str = "1.0.0"
+    environment: Literal["development", "testing", "production"] = "development"
+    debug: bool = True
 
-    # ── Server ─────────────────────────────────────────────────
-    HOST: str = "0.0.0.0"
-    PORT: int = 8000
+    # Database
+    mongodb_uri: str = "mongodb://localhost:27017"
+    mongodb_db_name: str = "medikiosk"
 
-    # ── MongoDB ────────────────────────────────────────────────
-    MONGO_URI: str = "mongodb://localhost:27017"
-    MONGO_DB_NAME: str = "medikiosk"
+    # Security. JWT implementation belongs to a later backend part.
+    jwt_secret: str = Field(default="change-this-in-local-development", min_length=1)
+    jwt_algorithm: str = "HS256"
+    jwt_expiration_minutes: int = Field(default=60, gt=0)
 
-    # ── JWT ────────────────────────────────────────────────────
-    JWT_SECRET: str = "change-this-in-production-use-a-long-random-string"
-    JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRY_MINUTES: int = 60
-
-    # ── AI / LLM ───────────────────────────────────────────────
-    MOCK_AI_MODE: bool = True          # ← Master toggle for demo reliability
-    LLM_PROVIDER: str = "mock"         # "mock" | "gemini"
-    LLM_API_KEY: str = ""
-    LLM_MODEL: str = "gpt-4o"
-    LLM_BASE_URL: str = "https://api.openai.com/v1"
-
-    # ── Gemini (used when LLM_PROVIDER="gemini") ──────────────
-    GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-2.5-flash"
-
-    # ── Speech ─────────────────────────────────────────────────
-    SPEECH_PROVIDER: str = "mock"
-    BHASHINI_API_KEY: str = ""
-    BHASHINI_BASE_URL: str = "https://dhruva-api.bhashini.gov.in"
-
-    # ── OCR ────────────────────────────────────────────────────
-    OCR_PROVIDER: str = "mock"
-
-    # ── FHIR / ABDM / HIS ─────────────────────────────────────
-    FHIR_BASE_URL: str = ""
-    ABDM_BASE_URL: str = ""
-    ABDM_CLIENT_ID: str = ""
-    ABDM_CLIENT_SECRET: str = ""
-    HIS_BASE_URL: str = ""
-    HIS_API_KEY: str = ""
-
-    # ── CORS ───────────────────────────────────────────────────
-    # Stored as a plain comma-separated string so .env stays simple.
-    # Access the parsed list via settings.CORS_ORIGINS (property below).
-    CORS_ORIGINS_STR: str = (
-        "http://localhost:5173,"
-        "http://localhost:3000,"
-        "http://127.0.0.1:5173,"
-        "http://127.0.0.1:3000"
+    # CORS values use comma-separated .env values rather than JSON arrays.
+    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:5173"]
     )
+
+    # AI / LLM
+    mock_ai_mode: bool = True
+    llm_provider: str = "mock"
+    llm_api_key: str = ""
+    llm_model: str = "gpt-4o"
+    llm_base_url: str = "https://api.openai.com/v1"
+
+    # Gemini (used when llm_provider="gemini")
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
+
+    # Speech
+    speech_provider: str = "mock"
+    bhashini_api_key: str = ""
+    bhashini_base_url: str = "https://dhruva-api.bhashini.gov.in"
+
+    # OCR
+    ocr_provider: str = "mock"
+
+    # FHIR / ABDM / HIS
+    fhir_base_url: str = ""
+    abdm_base_url: str = ""
+    abdm_client_id: str = ""
+    abdm_client_secret: str = ""
+    his_base_url: str = ""
+    his_api_key: str = ""
+
+    # Upload limits used by a future document-upload module.
+    max_upload_size_mb: int = Field(default=10, gt=0)
+    allowed_upload_extensions: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["pdf", "jpg", "jpeg", "png"]
+    )
+
+    @field_validator("cors_allowed_origins", "allowed_upload_extensions", mode="before")
+    @classmethod
+    def split_comma_separated_values(cls, value: str | list[str]) -> list[str]:
+        """Normalise comma-separated environment values and discard blanks."""
+        if isinstance(value, str):
+            values = value.split(",")
+        else:
+            values = value
+
+        cleaned = [item.strip() for item in values if item.strip()]
+        if not cleaned:
+            raise ValueError("must contain at least one non-empty value")
+        return cleaned
+
+    # Compatibility aliases let the current application use the new settings
+    # foundation without changing unrelated modules in this configuration task.
+    @property
+    def APP_NAME(self) -> str:
+        return self.app_name
+
+    @property
+    def APP_VERSION(self) -> str:
+        return self.app_version
+
+    @property
+    def APP_ENV(self) -> str:
+        return self.environment
+
+    @property
+    def DEBUG(self) -> bool:
+        return self.debug
+
+    @property
+    def MONGO_URI(self) -> str:
+        return self.mongodb_uri
+
+    @property
+    def MONGO_DB_NAME(self) -> str:
+        return self.mongodb_db_name
+
+    @property
+    def JWT_SECRET(self) -> str:
+        return self.jwt_secret
+
+    @property
+    def JWT_ALGORITHM(self) -> str:
+        return self.jwt_algorithm
+
+    @property
+    def JWT_EXPIRY_MINUTES(self) -> int:
+        return self.jwt_expiration_minutes
+
+    @property
+    def MOCK_AI_MODE(self) -> bool:
+        return self.mock_ai_mode
+
+    @property
+    def LLM_PROVIDER(self) -> str:
+        return self.llm_provider
+
+    @property
+    def LLM_API_KEY(self) -> str:
+        return self.llm_api_key
+
+    @property
+    def LLM_MODEL(self) -> str:
+        return self.llm_model
+
+    @property
+    def LLM_BASE_URL(self) -> str:
+        return self.llm_base_url
+
+    @property
+    def GEMINI_API_KEY(self) -> str:
+        return self.gemini_api_key
+
+    @property
+    def GEMINI_MODEL(self) -> str:
+        return self.gemini_model
+
+    @property
+    def SPEECH_PROVIDER(self) -> str:
+        return self.speech_provider
+
+    @property
+    def BHASHINI_API_KEY(self) -> str:
+        return self.bhashini_api_key
+
+    @property
+    def BHASHINI_BASE_URL(self) -> str:
+        return self.bhashini_base_url
+
+    @property
+    def OCR_PROVIDER(self) -> str:
+        return self.ocr_provider
+
+    @property
+    def FHIR_BASE_URL(self) -> str:
+        return self.fhir_base_url
+
+    @property
+    def ABDM_BASE_URL(self) -> str:
+        return self.abdm_base_url
+
+    @property
+    def ABDM_CLIENT_ID(self) -> str:
+        return self.abdm_client_id
+
+    @property
+    def ABDM_CLIENT_SECRET(self) -> str:
+        return self.abdm_client_secret
+
+    @property
+    def HIS_BASE_URL(self) -> str:
+        return self.his_base_url
+
+    @property
+    def HIS_API_KEY(self) -> str:
+        return self.his_api_key
 
     @property
     def CORS_ORIGINS(self) -> list[str]:
-        """Return CORS_ORIGINS_STR parsed into a list of origin strings."""
-        return [o.strip() for o in self.CORS_ORIGINS_STR.split(",") if o.strip()]
+        return self.cors_allowed_origins
 
 
-# Singleton – import this everywhere
+# Singleton: future modules should use ``from app.core.config import settings``.
 settings = Settings()

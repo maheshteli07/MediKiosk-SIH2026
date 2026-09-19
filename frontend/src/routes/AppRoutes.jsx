@@ -24,8 +24,10 @@ import ClinicalHistoryPage from "@/modules/clinical/pages/ClinicalHistoryPage.js
 import ClinicalTimelinePage from "@/modules/clinical/pages/ClinicalTimelinePage.jsx";
 import ClinicalSummaryPage from "@/modules/clinical/pages/ClinicalSummaryPage.jsx";
 
+// ---- Auth Module Pages ----
+import SignInPage from "@/modules/auth/pages/SignInPage.jsx";
+
 // ---- Doctor Module Pages ----
-import DoctorLoginPage from "@/modules/doctor/pages/DoctorLoginPage.jsx";
 import DoctorDashboardPage from "@/modules/doctor/pages/DoctorDashboardPage.jsx";
 import PatientQueuePage from "@/modules/doctor/pages/PatientQueuePage.jsx";
 import PatientCasePage from "@/modules/doctor/pages/PatientCasePage.jsx";
@@ -46,6 +48,10 @@ function AppRoutes() {
     <Routes>
       {/* Role Selection Landing */}
       <Route path="/" element={<RoleSwitcherPage />} />
+
+      {/* Auth */}
+      <Route path={ROUTES.SIGN_IN} element={<SignInPage />} />
+      <Route path={ROUTES.LOGIN} element={<SignInPage />} />
 
       {/* Patient Flow */}
       <Route path={ROUTES.WELCOME} element={<WelcomePage />} />
@@ -70,7 +76,7 @@ function AppRoutes() {
       <Route path={ROUTES.CLINICAL_SUMMARY} element={<ClinicalSummaryPage />} />
 
       {/* Doctor */}
-      <Route path={ROUTES.DOCTOR_LOGIN} element={<DoctorLoginPage />} />
+      <Route path={ROUTES.DOCTOR_LOGIN} element={<SignInPage />} />
       <Route path={ROUTES.DOCTOR_DASHBOARD} element={<DoctorDashboardPage />} />
       <Route path={ROUTES.PATIENT_QUEUE} element={<PatientQueuePage />} />
       <Route path={ROUTES.PATIENT_CASE} element={<PatientCasePage />} />
