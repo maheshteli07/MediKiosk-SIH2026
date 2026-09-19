@@ -1,33 +1,85 @@
 /**
- * EmptyState.jsx – Empty content placeholder component.
+ * EmptyState.jsx – Empty content placeholder.
  *
- * Shown when a list, queue, or dataset has no items.
+ * Used when a list, table, or section has no content to show.
+ * Accepts an optional icon, heading, subtext, and a single action.
+ *
+ * Copy defaults come from shared/constants/copy.js — override as needed.
  *
  * Props:
- *   - title: string
- *   - message: string
- *   - icon: Lucide icon component (optional)
- *   - action: { label, onClick } (optional)
+ *   icon      — Lucide icon component (optional)
+ *   heading   — string (required)
+ *   subtext   — string (optional)
+ *   action    — string label for the action button (optional)
+ *   onAction  — callback for the action button (optional)
+ *   size      — "sm" | "md" | "lg"  (controls vertical padding)
+ *   className — extra classes on the root element
  */
 
 import React from "react";
-import { Inbox } from "lucide-react";
-import Button from "./Button.jsx";
 
-function EmptyState({ title = "Nothing here yet", message, icon: Icon = Inbox, action }) {
+const SIZE_CLASSES = {
+  sm: "py-10",
+  md: "py-16",
+  lg: "py-24",
+};
+
+function EmptyState({
+  icon: Icon,
+  heading,
+  subtext,
+  action,
+  onAction,
+  size = "md",
+  className = "",
+}) {
+  const paddingClass = SIZE_CLASSES[size] ?? SIZE_CLASSES.md;
+
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-        <Icon className="text-slate-400" size={28} />
-      </div>
-      <h3 className="text-lg font-semibold text-slate-700 mb-1">{title}</h3>
-      {message && (
-        <p className="text-sm text-slate-400 max-w-sm mb-4">{message}</p>
+    <div
+      className={[
+        "flex flex-col items-center justify-center px-6 text-center",
+        paddingClass,
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      role="status"
+      aria-live="polite"
+    >
+      {Icon && (
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+          <Icon
+            className="h-8 w-8 text-slate-400"
+            strokeWidth={1.5}
+            aria-hidden="true"
+          />
+        </div>
       )}
-      {action && (
-        <Button variant="primary" onClick={action.onClick}>
-          {action.label}
-        </Button>
+
+      {heading && (
+        <h3 className="text-base font-semibold text-slate-700">{heading}</h3>
+      )}
+
+      {subtext && (
+        <p className="mt-1.5 max-w-xs text-sm leading-relaxed text-slate-400">
+          {subtext}
+        </p>
+      )}
+
+      {action && onAction && (
+        <button
+          onClick={onAction}
+          className={[
+            "mt-5 text-sm font-semibold text-primary-500",
+            "hover:text-primary-700 underline underline-offset-2",
+            "focus-visible:outline-none focus-visible:ring-2",
+            "focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded",
+            "transition-colors duration-150",
+          ].join(" ")}
+        >
+          {action}
+        </button>
       )}
     </div>
   );

@@ -21,7 +21,7 @@ import AyushHistoryPage from "@/modules/ayush/pages/AyushHistoryPage.jsx";
 
 // ---- Clinical Module Pages ----
 import ClinicalHistoryPage from "@/modules/clinical/pages/ClinicalHistoryPage.jsx";
-import TimelinePage from "@/modules/clinical/pages/TimelinePage.jsx";
+import ClinicalTimelinePage from "@/modules/clinical/pages/ClinicalTimelinePage.jsx";
 import ClinicalSummaryPage from "@/modules/clinical/pages/ClinicalSummaryPage.jsx";
 
 // ---- Doctor Module Pages ----
@@ -39,11 +39,13 @@ import VerificationPage from "@/modules/doctor/pages/VerificationPage.jsx";
  * Add new routes here as modules are developed.
  * Do NOT put page components or business logic in this file.
  */
+import RoleSwitcherPage from "@/shared/components/RoleSwitcherPage.jsx";
+
 function AppRoutes() {
   return (
     <Routes>
-      {/* Default redirect */}
-      <Route path="/" element={<Navigate to={ROUTES.WELCOME} replace />} />
+      {/* Role Selection Landing */}
+      <Route path="/" element={<RoleSwitcherPage />} />
 
       {/* Patient Flow */}
       <Route path={ROUTES.WELCOME} element={<WelcomePage />} />
@@ -64,7 +66,7 @@ function AppRoutes() {
 
       {/* Clinical */}
       <Route path={ROUTES.CLINICAL_HISTORY} element={<ClinicalHistoryPage />} />
-      <Route path={ROUTES.TIMELINE} element={<TimelinePage />} />
+      <Route path={ROUTES.TIMELINE} element={<ClinicalTimelinePage />} />
       <Route path={ROUTES.CLINICAL_SUMMARY} element={<ClinicalSummaryPage />} />
 
       {/* Doctor */}

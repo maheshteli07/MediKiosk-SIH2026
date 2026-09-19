@@ -2,36 +2,57 @@
    MediKiosk – Global Stylesheet
    index.css
    ============================================================
-   This file contains:
-   - Tailwind directives
-   - CSS custom properties (design tokens)
-   - Global resets / base styles
-   
-   DO NOT add component-specific styles here.
-   Use Tailwind utility classes inside components instead.
+   Contents:
+     1. Google Fonts import (Inter + Noto Sans)
+     2. Tailwind directives
+     3. CSS custom properties (design tokens)
+     4. Global base styles
+     5. Scrollbar styles
+
+   Rule: Do NOT add component-specific styles here.
+         Use Tailwind utility classes inside components.
    ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+/* 1. Fonts — single request for both Latin + Indic families */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap");
 
+/* 2. Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---- CSS Custom Properties ---- */
+/* 3. CSS Custom Properties — MediKiosk brand tokens */
 :root {
-  --color-primary: #0ea5e9;
-  --color-primary-dark: #0369a1;
-  --color-accent: #10b981;
-  --color-danger: #ef4444;
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-  --font-sans: "Inter", system-ui, sans-serif;
-  --radius: 0.75rem;
+  /* Brand palette */
+  --color-primary:      #0E6B67;
+  --color-primary-dark: #0A504D;
+  --color-primary-light:#BAE8E6;
+  --color-ayush:        #C98A2C;
+  --color-slate:        #1B2430;
+
+  /* Page surfaces */
+  --color-bg:           #F6F7F9;
+  --color-surface:      #ffffff;
+  --color-border:       #E2E6EA;
+
+  /* Semantic */
+  --color-success:      #2E8B6F;
+  --color-warning:      #B8791B;
+  --color-danger:       #C4443A;
+
+  /* Typography */
+  --color-text:         #1B2430;
+  --color-text-muted:   #6B7A8D;
+  --font-sans:          "Inter", system-ui, sans-serif;
+  --font-indic:         "Noto Sans", system-ui, sans-serif;
+
+  /* Shape */
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+  --radius-xl:  1rem;
 }
 
-/* ---- Base Reset ---- */
+/* 4. Base styles */
 *,
 *::before,
 *::after {
@@ -43,6 +64,8 @@
 html {
   font-family: var(--font-sans);
   font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
 
@@ -53,14 +76,28 @@ body {
   min-height: 100vh;
 }
 
-/* ---- Scrollbar ---- */
+/* Remove default focus outline for mouse users; keep for keyboard navigation */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 5. Scrollbar — thin, brand-consistent */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
-  border-radius: 3px;
+  background: #CBD2D9;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9AA5B1;
 }
