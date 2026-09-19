@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal
 
-from pydantic import Field, field_validator
+from pydantic import AliasChoices, Field, field_validator
 try:
     from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 except ImportError:
@@ -53,8 +53,22 @@ class Settings(BaseSettings):
     jwt_expiration_minutes: int = Field(default=60, gt=0)
 
     # CORS values use comma-separated .env values rather than JSON arrays.
-    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
-        default_factory=lambda: ["http://localhost:5173"]
+    cors_allowed_origins: str | list[str] = Field(
+        default_factory=lambda: [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+        ],
+        validation_alias=AliasChoices(
+            "cors_allowed_origins",
+            "cors_origins_str",
+            "cors_origins",
+            "CORS_ORIGINS_STR",
+            "CORS_ALLOWED_ORIGINS",
+        ),
     )
 
     # AI / LLM
@@ -91,7 +105,7 @@ class Settings(BaseSettings):
 
     # Upload limits used by a future document-upload module.
     max_upload_size_mb: int = Field(default=10, gt=0)
-    allowed_upload_extensions: Annotated[list[str], NoDecode] = Field(
+    allowed_upload_extensions: str | list[str] = Field(
         default_factory=lambda: ["pdf", "jpg", "jpeg", "png"]
     )
 
