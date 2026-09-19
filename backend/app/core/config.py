@@ -42,14 +42,14 @@ class Settings(BaseSettings):
     )
 
     # AI / LLM
-    mock_ai_mode: bool = True
-    llm_provider: str = "mock"
+    mock_ai_mode: bool = False
+    llm_provider: str = "gemini"
     llm_api_key: str = ""
     llm_model: str = "gpt-4o"
     llm_base_url: str = "https://api.openai.com/v1"
 
     # Gemini (used when llm_provider="gemini")
-    gemini_api_key: str = ""
+    gemini_api_key: str = "AQ.Ab8RN6L6gf5QjT5Pq3Z7lyPnbkHdFIAgvFD55NdqNQOYRbWL0Q"
     gemini_model: str = "gemini-2.5-flash"
 
     # Speech
