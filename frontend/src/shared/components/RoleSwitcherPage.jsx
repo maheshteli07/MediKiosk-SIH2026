@@ -6,14 +6,25 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Stethoscope, ArrowRight, Sparkles, ShieldCheck, Volume2 } from "lucide-react";
+import { User, Stethoscope, ArrowRight, Sparkles, ShieldCheck, Volume2, LogIn } from "lucide-react";
 import Button from "@/shared/components/Button.jsx";
 
 function RoleSwitcherPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-brand-bg flex flex-col items-center justify-center p-4 relative">
+      {/* Top Bar Sign In Button */}
+      <div className="absolute top-6 right-6">
+        <button
+          onClick={() => navigate("/signin")}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-emerald-700 hover:border-emerald-300 shadow-sm transition-all text-xs font-semibold"
+        >
+          <LogIn className="w-4 h-4 text-emerald-600" />
+          <span>Sign In</span>
+        </button>
+      </div>
+
       <div className="max-w-3xl w-full bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xl space-y-8 text-center">
         {/* Header */}
         <div>

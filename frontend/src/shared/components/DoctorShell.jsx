@@ -14,7 +14,7 @@
  */
 
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -24,6 +24,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { ROUTES } from "@/shared/constants/routes.js";
+import authService from "@/services/authService.js";
 
 const NAV_ITEMS = [
   {
@@ -72,6 +73,17 @@ function NavItem({ label, icon: Icon, to, end = false }) {
 }
 
 function DoctorShell({ children, title, breadcrumb }) {
+  const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+  const doctorName = currentUser?.sub
+    ? currentUser.sub.split("@")[0].replace(/^dr\./i, "Dr. ")
+    : "Dr. Demo";
+
+  const handleSignOut = () => {
+    authService.signOut();
+    navigate(ROUTES.SIGN_IN || "/signin");
+  };
+
   return (
     <div className="h-screen flex overflow-hidden" style={{ backgroundColor: "#F6F7F9" }}>
       {/* ── Fixed Sidebar ──────────────────────────────────────────────────── */}
@@ -109,19 +121,23 @@ function DoctorShell({ children, title, breadcrumb }) {
           {/* User chip */}
           <div className="flex items-center gap-2.5 px-3 py-2 mb-1">
             <div className="h-7 w-7 rounded-full bg-primary-500/20 flex items-center justify-center shrink-0">
-              <span className="text-primary-300 text-xs font-semibold">D</span>
+              <span className="text-primary-300 text-xs font-semibold">
+                {doctorName.charAt(0).toUpperCase()}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white text-xs font-medium truncate">Dr. Demo</p>
+              <p className="text-white text-xs font-medium truncate">{doctorName}</p>
               <p className="text-white/40 text-[10px] truncate">MBBS · General</p>
             </div>
           </div>
 
           <button
+            type="button"
+            onClick={handleSignOut}
             className={[
-              "flex items-center gap-3 px-3 py-2.5 w-full rounded-lg",
+              "flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-left",
               "text-sm font-medium text-white/45 hover:text-white hover:bg-white/8",
-              "transition-colors duration-150",
+              "transition-colors duration-150 cursor-pointer",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
             ].join(" ")}
           >
@@ -149,11 +165,13 @@ function DoctorShell({ children, title, breadcrumb }) {
           {/* Right-side actions (notifications, etc. can be added here) */}
           <div className="flex items-center gap-3 shrink-0">
             <div className="text-right hidden sm:block">
-              <p className="text-xs font-medium text-slate-700">Dr. Demo</p>
+              <p className="text-xs font-medium text-slate-700">{doctorName}</p>
               <p className="text-[10px] text-slate-400">General Medicine</p>
             </div>
             <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="text-primary-700 text-xs font-bold">D</span>
+              <span className="text-primary-700 text-xs font-bold">
+                {doctorName.charAt(0).toUpperCase()}
+              </span>
             </div>
           </div>
         </header>
