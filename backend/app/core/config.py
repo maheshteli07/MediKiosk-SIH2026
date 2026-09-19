@@ -9,7 +9,11 @@ from __future__ import annotations
 from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+try:
+    from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+except ImportError:
+    from pydantic_settings import BaseSettings, SettingsConfigDict  # type: ignore
+    NoDecode = object  # type: ignore
 
 
 class Settings(BaseSettings):
