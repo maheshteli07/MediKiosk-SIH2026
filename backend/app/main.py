@@ -36,6 +36,9 @@ from app.modules.ayush.routes import router as ayush_router
 from app.modules.clinical.routes import router as clinical_router
 from app.modules.doctor.routes import router as doctor_router
 
+# ── AI / Gemini router ─────────────────────────────────────────────────────────
+from app.integrations.ai.ai_routes import router as ai_router
+
 # ── Response helpers ───────────────────────────────────────────────────────────
 from app.utils.response import error_envelope
 
@@ -150,6 +153,9 @@ app.include_router(documents_router,    prefix=f"{API_PREFIX}/documents",    tag
 app.include_router(ayush_router,        prefix=f"{API_PREFIX}/ayush",        tags=["AYUSH"])
 app.include_router(clinical_router,     prefix=f"{API_PREFIX}/clinical",     tags=["Clinical"])
 app.include_router(doctor_router,       prefix=f"{API_PREFIX}/doctor",       tags=["Doctor"])
+
+# AI / Gemini
+app.include_router(ai_router,           prefix=f"{API_PREFIX}/ai",          tags=["AI"])
 
 
 # ─────────────────────────────────────────────────────────────────────────────

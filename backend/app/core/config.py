@@ -51,10 +51,14 @@ class Settings(BaseSettings):
 
     # ── AI / LLM ───────────────────────────────────────────────
     MOCK_AI_MODE: bool = True          # ← Master toggle for demo reliability
-    LLM_PROVIDER: str = "mock"
+    LLM_PROVIDER: str = "mock"         # "mock" | "gemini"
     LLM_API_KEY: str = ""
     LLM_MODEL: str = "gpt-4o"
     LLM_BASE_URL: str = "https://api.openai.com/v1"
+
+    # ── Gemini (used when LLM_PROVIDER="gemini") ──────────────
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     # ── Speech ─────────────────────────────────────────────────
     SPEECH_PROVIDER: str = "mock"
