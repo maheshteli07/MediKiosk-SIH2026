@@ -41,12 +41,12 @@ const NAV_ITEMS = [
   {
     label: "Cases",
     icon:  FileSearch,
-    to:    "/doctor/cases",   // reserved for future sprint
+    to:    ROUTES.DOCTOR_CASES,
   },
   {
     label: "Approvals",
     icon:  CheckCircle2,
-    to:    "/doctor/approvals", // reserved for future sprint
+    to:    ROUTES.DOCTOR_APPROVALS,
   },
 ];
 

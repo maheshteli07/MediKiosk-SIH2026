@@ -37,6 +37,8 @@ export const ROUTES = {
   DOCTOR_LOGIN: "/doctor/login",
   DOCTOR_DASHBOARD: "/doctor/dashboard",
   PATIENT_QUEUE: "/doctor/queue",
+  DOCTOR_CASES: "/doctor/cases",
+  DOCTOR_APPROVALS: "/doctor/approvals",
   PATIENT_CASE: "/doctor/patient/:patientId",
   SUMMARY_REVIEW: "/doctor/summary/:summaryId",
   VERIFICATION: "/doctor/verify/:summaryId",

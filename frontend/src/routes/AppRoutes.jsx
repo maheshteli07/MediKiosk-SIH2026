@@ -79,6 +79,8 @@ function AppRoutes() {
       <Route path={ROUTES.DOCTOR_LOGIN} element={<SignInPage />} />
       <Route path={ROUTES.DOCTOR_DASHBOARD} element={<DoctorDashboardPage />} />
       <Route path={ROUTES.PATIENT_QUEUE} element={<PatientQueuePage />} />
+      <Route path={ROUTES.DOCTOR_CASES} element={<PatientCasePage />} />
+      <Route path={ROUTES.DOCTOR_APPROVALS} element={<VerificationPage />} />
       <Route path={ROUTES.PATIENT_CASE} element={<PatientCasePage />} />
       <Route path={ROUTES.SUMMARY_REVIEW} element={<SummaryReviewPage />} />
       <Route path={ROUTES.VERIFICATION} element={<VerificationPage />} />
