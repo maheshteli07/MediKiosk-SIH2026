@@ -39,10 +39,8 @@ def get_client() -> AsyncIOMotorClient:
     return _client
 
 
-def get_database() -> AsyncIOMotorDatabase:
-    """Return the MediKiosk Motor database handle."""
-    if _db is None:
-        raise RuntimeError("MongoDB database is not initialised. Did startup run?")
+def get_database() -> AsyncIOMotorDatabase | None:
+    """Return the MediKiosk Motor database handle or None if not yet connected."""
     return _db
 
 

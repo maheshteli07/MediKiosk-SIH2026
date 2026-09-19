@@ -21,6 +21,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 
@@ -33,12 +34,12 @@ def _envelope(
     error: Optional[dict] = None,
     meta: Optional[dict] = None,
 ) -> dict:
-    return {
+    return jsonable_encoder({
         "success": success,
         "data": data,
         "error": error,
         "meta": meta,
-    }
+    })
 
 
 # ── Public helpers ────────────────────────────────────────────────────────────

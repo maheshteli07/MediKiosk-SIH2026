@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Union
 
-from pydantic import Field, field_validator
+from pydantic import AliasChoices, Field, field_validator
 try:
     from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 except ImportError:

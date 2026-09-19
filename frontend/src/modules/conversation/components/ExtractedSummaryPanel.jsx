@@ -73,7 +73,11 @@ function ExtractedSummaryPanel({ extractedEntities = [] }) {
                   {symptoms.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-all animate-in fade-in slide-in-from-right-3 duration-300"
+                      className={`flex items-center justify-between p-2.5 rounded-xl border transition-all animate-in fade-in slide-in-from-right-3 duration-300 ${
+                        item.source === "document"
+                          ? "bg-primary-50/60 border-primary-200"
+                          : "bg-slate-50 border-slate-100 hover:border-slate-200"
+                      }`}
                     >
                       <div>
                         <p className="text-xs font-semibold text-slate-800">{item.text}</p>
@@ -81,8 +85,8 @@ function ExtractedSummaryPanel({ extractedEntities = [] }) {
                           <p className="text-[11px] text-slate-500">Duration: {item.duration}</p>
                         )}
                       </div>
-                      <Badge variant="needs-check" size="sm">
-                        Detected
+                      <Badge variant={item.source === "document" ? "info" : "needs-check"} size="sm">
+                        {item.source === "document" ? "From Record" : "Detected"}
                       </Badge>
                     </div>
                   ))}
@@ -101,7 +105,11 @@ function ExtractedSummaryPanel({ extractedEntities = [] }) {
                   {medicines.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-amber-50/50 border border-amber-100 hover:border-amber-200 transition-all animate-in fade-in slide-in-from-right-3 duration-300"
+                      className={`flex items-center justify-between p-2.5 rounded-xl border transition-all animate-in fade-in slide-in-from-right-3 duration-300 ${
+                        item.source === "document"
+                          ? "bg-amber-50/70 border-amber-200"
+                          : "bg-amber-50/50 border-amber-100 hover:border-amber-200"
+                      }`}
                     >
                       <div>
                         <p className="text-xs font-semibold text-slate-800">{item.text}</p>
@@ -109,8 +117,8 @@ function ExtractedSummaryPanel({ extractedEntities = [] }) {
                           <p className="text-[11px] text-slate-500">Dosage: {item.dosage}</p>
                         )}
                       </div>
-                      <Badge variant="needs-check" size="sm">
-                        Detected
+                      <Badge variant={item.source === "document" ? "info" : "needs-check"} size="sm">
+                        {item.source === "document" ? "From Record" : "Detected"}
                       </Badge>
                     </div>
                   ))}
@@ -123,22 +131,26 @@ function ExtractedSummaryPanel({ extractedEntities = [] }) {
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
                   <History className="w-3.5 h-3.5 text-brand-slate" />
-                  Past Medical History
+                  Past Medical History / Labs
                 </h4>
                 <div className="space-y-2">
                   {history.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-all animate-in fade-in slide-in-from-right-3 duration-300"
+                      className={`flex items-center justify-between p-2.5 rounded-xl border transition-all animate-in fade-in slide-in-from-right-3 duration-300 ${
+                        item.source === "document"
+                          ? "bg-sky-50/60 border-sky-200"
+                          : "bg-slate-50 border-slate-100 hover:border-slate-200"
+                      }`}
                     >
                       <div>
                         <p className="text-xs font-semibold text-slate-800">{item.text}</p>
                         {item.duration && (
-                          <p className="text-[11px] text-slate-500">Since: {item.duration}</p>
+                          <p className="text-[11px] text-slate-500">{item.duration}</p>
                         )}
                       </div>
-                      <Badge variant="needs-check" size="sm">
-                        Detected
+                      <Badge variant={item.source === "document" ? "info" : "needs-check"} size="sm">
+                        {item.source === "document" ? "From Record" : "Detected"}
                       </Badge>
                     </div>
                   ))}

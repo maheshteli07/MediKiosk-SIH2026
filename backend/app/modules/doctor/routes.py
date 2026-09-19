@@ -1,37 +1,40 @@
 """
 modules/doctor/routes.py – Doctor Module Routes
 ================================================
-Developer 5 owns implementation.  Stub endpoints return HTTP 501.
-Auth protected endpoints use require_doctor dependency.
-
-Note: /api/auth/login and /api/auth/dev-token live in core/security.py
-      and are mounted at /api/auth in main.py.
-
-Endpoints (prefix: /api/doctor)
----------------------------------
-  GET  /api/doctor/patients                        – Patient queue
-  GET  /api/doctor/patients/{patient_id}           – Full patient case
-  PUT  /api/doctor/summary/{summary_id}/verify     – Mark summary verified
-  POST /api/doctor/summary/{summary_id}/finalize   – Finalize and sign off
-  POST /api/doctor/integrations/fhir               – Push to FHIR
-  POST /api/doctor/integrations/abdm               – Push to ABDM
-  POST /api/doctor/integrations/his                – Push to HIS
-  GET  /api/doctor/integrations/status/{patient_id}– Integration status
+Doctor-facing API endpoints for patient queue retrieval, full case review,
+summary verification, and clinical sign-offs.
+Protected by require_doctor dependency.
 """
 
-from fastapi import APIRouter, Depends, Query
-import uuid
-from datetime import datetime, timezone
-from typing import Optional, List, Dict, Any
+from __future__ import annotations
 
-from app.core.dependencies import get_db, require_doctor
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+import uuid
+
+from fastapi import APIRouter, Body, Depends, Query, status
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
 from app.core.database import Collections
-from app.utils.response import error_envelope, success_response, created_response
+from app.core.dependencies import (
+    PaginationParams,
+    get_db,
+    pagination_params,
+    require_doctor,
+)
 from app.modules.doctor.feedback_schema import FeedbackCreateRequest
+from app.modules.doctor.schema import VerifySummarySchema
+from app.modules.doctor.service import DoctorService
+from app.utils.response import (
+    created_response,
+    error_envelope,
+    paginated_response,
+    success_response,
+)
 
 router = APIRouter()
 
-_NOT_IMPL = error_envelope("Not yet implemented", code="NOT_IMPLEMENTED", status_code=501)
+_NOT_IMPL = error_envelope("Integration not yet implemented", code="NOT_IMPLEMENTED", status_code=501)
 
 # In-memory storage for feedback fallback & development
 _FEEDBACK_STORE: List[Dict[str, Any]] = [
@@ -297,41 +300,78 @@ async def acknowledge_feedback(feedback_id: str, db=Depends(get_db)):
 # ── Existing Doctor Routes ───────────────────────────────────────────────────
 
 @router.get("/patients", summary="Get patient queue for the doctor")
-async def get_patient_queue(doctor=Depends(require_doctor), db=Depends(get_db)):
-    return _NOT_IMPL
+async def get_patient_queue(
+    pagination: PaginationParams = Depends(pagination_params),
+    doctor: dict = Depends(require_doctor),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> Any:
+    """Fetch paginated patient queue for active/completed kiosk consultations."""
+    queue, total = await DoctorService.get_patient_queue(
+        db, skip=pagination.skip, limit=pagination.page_size
+    )
+    return paginated_response(
+        data=queue,
+        total=total,
+        page=pagination.page,
+        page_size=pagination.page_size,
+        message="Patient queue retrieved successfully",
+    )
 
 
 @router.get("/patients/{patient_id}", summary="Get full patient case")
-async def get_patient_case(patient_id: str, doctor=Depends(require_doctor), db=Depends(get_db)):
-    return _NOT_IMPL
+async def get_patient_case(
+    patient_id: str,
+    doctor: dict = Depends(require_doctor),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> Any:
+    """Fetch complete patient case record including clinical summary, history, and documents."""
+    case_data = await DoctorService.get_patient_case(db, patient_id)
+    return success_response(data=case_data, message="Patient case details retrieved")
 
 
 @router.put("/summary/{summary_id}/verify", summary="Mark a clinical summary as verified")
-async def verify_summary(summary_id: str, doctor=Depends(require_doctor), db=Depends(get_db)):
-    return _NOT_IMPL
+async def verify_summary(
+    summary_id: str,
+    payload: VerifySummarySchema = Body(default_factory=VerifySummarySchema),
+    doctor: dict = Depends(require_doctor),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> Any:
+    """Mark a clinical summary as verified / reviewed with doctor notes."""
+    doctor_id = doctor.get("sub", "doc-001")
+    updated = await DoctorService.verify_summary(
+        db, summary_id, doctor_id=doctor_id, notes=payload.doctor_notes
+    )
+    return success_response(data=updated, message="Clinical summary verified successfully")
 
 
 @router.post("/summary/{summary_id}/finalize", summary="Finalize and sign off on a summary")
-async def finalize_summary(summary_id: str, doctor=Depends(require_doctor), db=Depends(get_db)):
-    return _NOT_IMPL
+async def finalize_summary(
+    summary_id: str,
+    doctor: dict = Depends(require_doctor),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+) -> Any:
+    """Finalize and sign off on a clinical summary (status: doctor_approved)."""
+    doctor_id = doctor.get("sub", "doc-001")
+    finalized = await DoctorService.finalize_summary(db, summary_id, doctor_id=doctor_id)
+    return success_response(data=finalized, message="Clinical summary finalized and signed off")
 
 
 @router.post("/integrations/fhir", summary="Push patient data to FHIR server")
-async def push_fhir(doctor=Depends(require_doctor), db=Depends(get_db)):
+async def push_fhir(doctor: dict = Depends(require_doctor), db: AsyncIOMotorDatabase = Depends(get_db)) -> Any:
     return _NOT_IMPL
 
 
 @router.post("/integrations/abdm", summary="Push patient data to ABDM")
-async def push_abdm(doctor=Depends(require_doctor), db=Depends(get_db)):
+async def push_abdm(doctor: dict = Depends(require_doctor), db: AsyncIOMotorDatabase = Depends(get_db)) -> Any:
     return _NOT_IMPL
 
 
 @router.post("/integrations/his", summary="Push patient data to HIS")
-async def push_his(doctor=Depends(require_doctor), db=Depends(get_db)):
+async def push_his(doctor: dict = Depends(require_doctor), db: AsyncIOMotorDatabase = Depends(get_db)) -> Any:
     return _NOT_IMPL
 
 
 @router.get("/integrations/status/{patient_id}", summary="Get integration push status")
-async def get_integration_status(patient_id: str, doctor=Depends(require_doctor), db=Depends(get_db)):
+async def get_integration_status(patient_id: str, doctor: dict = Depends(require_doctor), db: AsyncIOMotorDatabase = Depends(get_db)) -> Any:
     return _NOT_IMPL
 
